@@ -19,17 +19,16 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Table(name = "supply_order_items")
 public class SupplyOrderItem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @EmbeddedId
+    private SupplyOrderItemId id = new SupplyOrderItemId();
 
     @ManyToOne
+    @MapsId("supplyOrderId")
     @JoinColumn(name = "supply_order_id", referencedColumnName = "id")
-    @JsonBackReference
     private SupplyOrder supplyOrder;
 
     @ManyToOne
-    @JsonBackReference
+    @MapsId("ingredientId")
     @JoinColumn(name = "ingredient_id", nullable = false)
     private Ingredient ingredient;
 

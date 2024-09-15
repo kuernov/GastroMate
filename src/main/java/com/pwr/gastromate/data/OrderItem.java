@@ -16,22 +16,23 @@ import java.math.BigDecimal;
 @Setter
 @Table(name = "order_items")
 public class OrderItem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @EmbeddedId
+    private OrderItemId id = new OrderItemId();
 
     @ManyToOne
+    @MapsId("menuItemId")
     @JoinColumn(name = "menu_item_id")
-    @JsonBackReference
     private MenuItem menuItem;
+
+    @ManyToOne
+    @MapsId("orderId")
+    @JoinColumn(name = "order_id")
+    private Order order;
 
     private int quantity;
 
     private BigDecimal priceAtOrder;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    @JsonBackReference
-    private Order order;
+
 
 }

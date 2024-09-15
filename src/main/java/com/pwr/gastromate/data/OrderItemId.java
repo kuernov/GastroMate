@@ -1,7 +1,9 @@
 package com.pwr.gastromate.data;
 
 import jakarta.persistence.Embeddable;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -9,9 +11,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class MenuItemIngredientId implements Serializable {
-
+public class OrderItemId  implements Serializable {
     private Integer menuItemId;
-    private Integer ingredientId;
-
+    private Integer orderId;
 }
