@@ -42,6 +42,9 @@ public class User {
     @JsonManagedReference
     private List<SupplyOrder> supplyOrders;
 
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    private List<Category> categories;
 
 
 }

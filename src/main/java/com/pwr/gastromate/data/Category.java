@@ -1,5 +1,6 @@
 package com.pwr.gastromate.data;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,7 +27,13 @@ public class Category {
     @ManyToMany(mappedBy = "categories")
     private Set<MenuItem> menuItems = new HashSet<>();
 
-    public Category(String name){
+    @ManyToOne
+    @JsonBackReference
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    public Category(String name, User user){
+        this.user = user;
         this.name = name;
     }
 
