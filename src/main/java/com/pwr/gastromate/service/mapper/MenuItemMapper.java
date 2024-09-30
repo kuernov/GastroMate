@@ -4,10 +4,12 @@ import com.pwr.gastromate.data.MenuItem;
 import com.pwr.gastromate.dto.MenuItemDTO;
 import com.pwr.gastromate.data.Category;
 import com.pwr.gastromate.data.User;
+import org.springframework.stereotype.Component;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Component
 public class MenuItemMapper {
 
     // Mapowanie MenuItem na MenuItemDTO

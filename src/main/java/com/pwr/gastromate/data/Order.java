@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -27,10 +28,8 @@ public class Order {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @JsonBackReference
     private User user;
-
+    @CreationTimestamp
     private Timestamp orderDate;
-    private BigDecimal totalAmount;
-
     @OneToMany(mappedBy = "order") 
     @JsonManagedReference
     private List<OrderItem> orderItems;
