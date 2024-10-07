@@ -50,6 +50,10 @@ public class User implements UserDetails {
     @JsonManagedReference
     private List<Category> categories;
 
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    private List<Unit> units;
+
     @Convert(converter = ListToJsonConverter.class)
     private List<String> roles;
 

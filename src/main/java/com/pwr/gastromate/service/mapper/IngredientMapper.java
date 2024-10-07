@@ -19,14 +19,14 @@ public class IngredientMapper {
                 ingredient.getId(),
                 ingredient.getName(),
                 ingredient.getQuantity(),
-                ingredient.getUnit().getName(),  // Pobieramy nazwę jednostki (zakładam, że Unit ma metodę getName())
-                ingredient.getExpiryDate(),
-                ingredient.getUser().getId()  // Pobieramy ID użytkownika
+                ingredient.getUnit().getId(),  // Pobieramy nazwę jednostki (zakładam, że Unit ma metodę getName())
+                ingredient.getExpiryDate()
+
         );
     }
 
     // Konwersja z DTO do encji Ingredient
-    public Ingredient toEntity(IngredientDTO ingredientDTO, Unit unit, User user) {
+    public Ingredient toEntity(IngredientDTO ingredientDTO, Unit unit) {
         if (ingredientDTO == null) {
             return null;
         }
@@ -37,7 +37,7 @@ public class IngredientMapper {
         ingredient.setQuantity(ingredientDTO.getQuantity());
         ingredient.setUnit(unit);  // Ustawiamy jednostkę na podstawie przekazanego obiektu Unit
         ingredient.setExpiryDate(ingredientDTO.getExpiryDate());
-        ingredient.setUser(user);  // Ustawiamy użytkownika na podstawie przekazanego obiektu User
+
 
         return ingredient;
     }

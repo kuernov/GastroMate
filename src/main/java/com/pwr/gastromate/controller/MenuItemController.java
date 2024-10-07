@@ -1,16 +1,37 @@
 package com.pwr.gastromate.controller;
 
+import com.pwr.gastromate.data.User;
 import com.pwr.gastromate.dto.MenuItemDTO;
+import com.pwr.gastromate.dto.MenuItemRequest;
 import com.pwr.gastromate.service.MenuItemService;
+import com.pwr.gastromate.service.UserService;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.util.List;
+
 @RestController
+@AllArgsConstructor
 @RequestMapping("/menu")
 public class MenuItemController {
-    @Autowired
-    private MenuItemService menuItemService;
+    private final MenuItemService menuItemService;
+    private final UserService userService;
+
+    @GetMapping
+    public ResponseEntity<List<MenuItemDTO>> getMenuItemByUser(Principal principal){
+        if (principal == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        List<MenuItemDTO> menuItems =  menuItemService.findAllByUserId(user.getId());
+        return ResponseEntity.ok(menuItems);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<MenuItemDTO> getMenuItemById(@PathVariable Integer id) {
@@ -22,10 +43,13 @@ public class MenuItemController {
         }
     }
 
-    // Utwórz nowy MenuItem na podstawie DTO
     @PostMapping
-    public ResponseEntity<MenuItemDTO> createMenuItem(@RequestBody MenuItemDTO menuItemDTO) {
-        MenuItemDTO createdMenuItem = menuItemService.save(menuItemDTO);
+    public ResponseEntity<MenuItemDTO> createMenuItem(@RequestBody MenuItemRequest menuItemRequest, Principal principal) {
+        if (principal == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        MenuItemDTO createdMenuItem = menuItemService.save(menuItemRequest.getMenuItem(), menuItemRequest.getMenuItemIngredients(), user);
         return ResponseEntity.ok(createdMenuItem);
     }
 

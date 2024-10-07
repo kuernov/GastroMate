@@ -25,7 +25,6 @@ public class OrderController {
     @GetMapping
     @RolesAllowed("USER")
     public ResponseEntity<List<Order>> getUserOrders(Principal principal) {
-        List<Order> orders = new ArrayList<>();
         if (principal == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }

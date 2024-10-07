@@ -1,34 +1,48 @@
 package com.pwr.gastromate.controller;
 
+import com.pwr.gastromate.data.User;
 import com.pwr.gastromate.dto.IngredientDTO;
 import com.pwr.gastromate.service.IngredientService;
+import com.pwr.gastromate.service.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/ingredients")
 public class IngredientController {
 
-    @Autowired
-    private IngredientService ingredientService;
+    private final IngredientService ingredientService;
+    private final UserService userService;
 
     // Pobieranie wszystkich składników dla użytkownika
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<IngredientDTO>> getIngredientsByUserId(@PathVariable Integer userId) {
-        List<IngredientDTO> ingredients = ingredientService.getIngredientsByUserId(userId);
+    @GetMapping
+    public ResponseEntity<List<IngredientDTO>> getIngredientsByUserId(Principal principal) {
+        if (principal == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        List<IngredientDTO> ingredients = ingredientService.getIngredientsByUserId(user.getId());
         return ResponseEntity.ok(ingredients);
     }
 
     // Dodawanie składnika dla użytkownika
-    @PostMapping("/user/{userId}")
+    @PostMapping
     public ResponseEntity<IngredientDTO> addIngredient(
-            @PathVariable Integer userId,
+            Principal principal,
             @RequestBody IngredientDTO ingredientDTO) {
-        IngredientDTO createdIngredient = ingredientService.addIngredient(ingredientDTO, userId);
+        if (principal == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        IngredientDTO createdIngredient = ingredientService.addIngredient(ingredientDTO, user);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdIngredient);
     }
 

@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UnitRepository extends JpaRepository<Unit, Integer> {
-    Optional<Unit> findByNameAndUserId(String name, Integer userId);
+    Optional<Unit> findByIdAndUserId(Integer id, Integer userId);
 }

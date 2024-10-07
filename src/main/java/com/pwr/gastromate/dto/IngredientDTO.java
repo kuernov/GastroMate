@@ -17,8 +17,7 @@ public class IngredientDTO {
     private Integer id;
     private String name;
     private Float quantity;
-    private String unit;
+    private Integer unitId;
     private LocalDate expiryDate;
-    private Integer userId;
 
 }

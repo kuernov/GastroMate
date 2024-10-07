@@ -1,6 +1,5 @@
 package com.pwr.gastromate.dto;
 
-import com.pwr.gastromate.data.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryDTO {
-    private Integer id;
+public class UnitDTO {
     private String name;
+    private String abbreviation;
+    private Double conversionToGrams;
 }

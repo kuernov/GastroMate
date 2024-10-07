@@ -1,5 +1,6 @@
 package com.pwr.gastromate.data;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,7 +22,11 @@ public class Unit {
     @Column(nullable = false, unique = true)
     private String name;
 
+    private String abbreviation;
+
+    private Double conversionToGrams;
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 

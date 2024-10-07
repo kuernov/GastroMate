@@ -37,16 +37,12 @@ public class IngredientService {
                 .collect(Collectors.toList());
     }
 
-    public IngredientDTO addIngredient(IngredientDTO ingredientDTO, Integer userId) {
-        // Znajdź użytkownika
-        User user = userRepository.findById(userId)
-                .orElseThrow(()-> new ResourceNotFoundException("User not found with id: " + userId));
-        // Znajdź jednostkę (unit) dla tego użytkownika lub utwórz ją, jeśli nie istnieje
-        Unit unit = unitRepository.findByNameAndUserId(ingredientDTO.getUnit(), user.getId())
-                .orElseGet(() -> createNewUnit(ingredientDTO.getUnit(), user));
+    public IngredientDTO addIngredient(IngredientDTO ingredientDTO, User user) {
+        Unit unit = unitRepository.findByIdAndUserId(ingredientDTO.getUnitId(), user.getId())
+                .orElseThrow(()-> new ResourceNotFoundException("Unit not found"));
 
-        // Utwórz nowy składnik (ingredient)
-        Ingredient ingredient = ingredientMapper.toEntity(ingredientDTO, unit, user);
+        Ingredient ingredient = ingredientMapper.toEntity(ingredientDTO, unit);
+        ingredient.setUser(user);
         Ingredient savedIngredient = ingredientRepository.save(ingredient);
 
         return ingredientMapper.toDTO(savedIngredient);

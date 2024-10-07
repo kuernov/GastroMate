@@ -1,8 +1,16 @@
 package com.pwr.gastromate.data;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "menu_item_ingredients")
 public class MenuItemIngredient {
 

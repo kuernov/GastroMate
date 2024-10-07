@@ -34,10 +34,7 @@ public class CategoryService {
         return CategoryMapper.toDTO(category);
     }
 
-    public CategoryDTO createCategoryForUser(CategoryDTO categoryDTO, Integer userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
-
+    public CategoryDTO createCategoryForUser(CategoryDTO categoryDTO, User user) {
         Category category = CategoryMapper.toEntity(categoryDTO);
         category.setUser(user);  // Powiązanie kategorii z użytkownikiem
         Category savedCategory = categoryRepository.save(category);

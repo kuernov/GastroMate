@@ -32,8 +32,7 @@ public class Category {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Category(String name, User user){
-        this.user = user;
+    public Category(String name){
         this.name = name;
     }
 

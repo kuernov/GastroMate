@@ -30,12 +30,15 @@ CREATE INDEX idx_email ON users (email);
 
 CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
+    name VARCHAR(255) NOT NULL,
+    user_id INTEGER REFERENCES users(id)
 );
 
 CREATE TABLE units(
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    abbreviation VARCHAR(255),
+    conversion_to_grams DOUBLE PRECISION,
     user_id INTEGER REFERENCES users(id),
     CONSTRAINT unique_name_user UNIQUE (name, user_id)
 );
