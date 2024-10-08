@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -25,6 +26,16 @@ public class UnitController {
     public ResponseEntity<Unit> getUnitById(@PathVariable Integer id) {
         Optional<Unit> unit = unitService.getUnitById(id);
         return unit.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Unit>> getAllUnits(Principal principal) {
+        if (principal == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        List<Unit> units = unitService.getUnitsByUserId(user.getId());
+        return ResponseEntity.ok(units);
     }
 
     @PostMapping

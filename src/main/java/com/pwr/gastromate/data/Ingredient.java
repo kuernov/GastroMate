@@ -31,6 +31,7 @@ public class Ingredient {
 
     @ManyToOne
     @JoinColumn(name = "unit_id", nullable = false)
+    @JsonManagedReference
     private Unit unit;
 
     private LocalDate expiryDate;
