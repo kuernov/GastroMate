@@ -1,9 +1,9 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import { Card, Form, Input, Button, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
-const LoginPage = ({setIsLoggedIn}) => {
+const LoginPage = ({ setIsLoggedIn }) => {
     const navigate = useNavigate();
     const [accessToken, setAccessToken] = useState('');
 
@@ -25,8 +25,7 @@ const LoginPage = ({setIsLoggedIn}) => {
                 const responseData = await response.json();
                 console.log('Odpowiedź od serwera:', responseData);
                 const token = responseData.token;
-                setIsLoggedIn(true);
-
+                setIsLoggedIn(true); // Aktualizacja stanu logowania
                 setAccessToken(token);
                 // Przechowywanie tokenu w localStorage
                 localStorage.setItem('accessToken', token);

@@ -1,27 +1,26 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Button, Layout, Menu } from "antd";
 import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
 import DashboardPage from "./components/DashboardPage";
 import IngredientsPage from "./components/IngredientsPage";
+import { useNavigate } from "react-router-dom";
+
 
 import "antd/dist/reset.css";
 
 const { Header, Content, Footer } = Layout;
 
 const App = () => {
-    // Stan logowania użytkownika
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    // Stan logowania
+    const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("accessToken"));
 
-    // Funkcja obsługująca wylogowanie
+    // Funkcja do obsługi wylogowania
     const handleLogout = () => {
-        setIsLoggedIn(false);
         localStorage.removeItem("accessToken");
-
-        // Tutaj możesz też usunąć token sesji lub wyczyścić dane z localStorage
-    };
-
+        setIsLoggedIn(false);  // Ustawiamy stan na false
+        window.location.href = "/login"    };
     return (
         <Router>
             <Layout className="layout">
@@ -58,8 +57,8 @@ const App = () => {
                     <Routes>
                         <Route path="/login" element={<LoginPage setIsLoggedIn={setIsLoggedIn} />} />
                         <Route path="/register" element={<RegisterPage />} />
-                        <Route path="/dashboard" element={isLoggedIn ? <DashboardPage /> : <Navigate to="/login" />} />
-                        <Route path="/ingredients" element={isLoggedIn ? <IngredientsPage /> : <Navigate to="/login" />} />
+                        <Route path="/dashboard" element={<DashboardPage /> } />
+                        <Route path="/ingredients" element={<IngredientsPage /> } />
                         <Route path="*" element={<Navigate to="/login" />} />
                     </Routes>
                 </Content>
