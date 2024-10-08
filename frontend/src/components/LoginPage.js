@@ -1,8 +1,12 @@
-import React from "react";
+import React, {useState} from "react";
 import { Card, Form, Input, Button, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
-const LoginPage = ({ setCurrentPage }) => {
+const LoginPage = ({setIsLoggedIn}) => {
+    const navigate = useNavigate();
+    const [accessToken, setAccessToken] = useState('');
+
     const onFinish = async (values) => {
         try {
             const response = await fetch("http://localhost:8080/login", {
@@ -18,7 +22,16 @@ const LoginPage = ({ setCurrentPage }) => {
 
             if (response.ok) {
                 message.success("Login successful!");
-                // Możesz przejść do dashboardu lub innej strony po pomyślnym logowaniu
+                const responseData = await response.json();
+                console.log('Odpowiedź od serwera:', responseData);
+                const token = responseData.token;
+                setIsLoggedIn(true);
+
+                setAccessToken(token);
+                // Przechowywanie tokenu w localStorage
+                localStorage.setItem('accessToken', token);
+                console.log('Bearer Token:', token);
+                navigate("/dashboard");
             } else {
                 message.error("Invalid username or password");
             }
@@ -34,7 +47,7 @@ const LoginPage = ({ setCurrentPage }) => {
                     name="username"
                     rules={[{ required: true, message: "Please input your Username!" }]}
                 >
-                    <Input prefix={<UserOutlined />} placeholder="Username (Email)" />
+                    <Input prefix={<UserOutlined />} placeholder="Email" />
                 </Form.Item>
                 <Form.Item
                     name="password"
@@ -48,7 +61,7 @@ const LoginPage = ({ setCurrentPage }) => {
                     </Button>
                 </Form.Item>
                 <Form.Item>
-                    <Button type="link" onClick={() => setCurrentPage("register")}>
+                    <Button type="link" onClick={() => navigate("/register")}>
                         Don't have an account? Register
                     </Button>
                 </Form.Item>

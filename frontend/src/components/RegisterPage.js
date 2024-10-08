@@ -1,7 +1,10 @@
 import React from "react";
 import { Card, Form, Input, Button, message } from "antd";
+import { useNavigate } from "react-router-dom"; // Importujemy useNavigate
 
 const RegisterPage = () => {
+    const navigate = useNavigate(); // Hook do nawigacji
+
     const onFinish = async (values) => {
         try {
             const response = await fetch("http://localhost:8080/registration", {
@@ -14,6 +17,7 @@ const RegisterPage = () => {
 
             if (response.ok) {
                 message.success("Registration successful!");
+                navigate("/login"); // Przekierowanie na stronę logowania po sukcesie
             } else {
                 message.error("Registration failed");
             }
