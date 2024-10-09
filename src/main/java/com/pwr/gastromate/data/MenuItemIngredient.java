@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -25,6 +27,7 @@ public class MenuItemIngredient {
     @ManyToOne
     @MapsId("ingredientId")  // Mapa klucz ingredientId z MenuItemIngredientId do encji Ingredient
     @JoinColumn(name = "ingredient_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)  // Usuwanie kaskadowe
     private Ingredient ingredient;
 
     @Column(nullable = false)
