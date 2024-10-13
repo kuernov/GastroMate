@@ -1,10 +1,13 @@
-import React from "react";
-import {Form, Input, InputNumber, Button, Select, message, Card} from "antd";
+import React, { useState } from "react";
+import { Form, Input, InputNumber, Button, Select, message, Card } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import UnitForm from "./UnitForm"; // Import nowego komponentu
 
-const IngredientsForm = ({ units, setIngredients, ingredients }) => {
+const IngredientsForm = ({ units, setIngredients, ingredients, setUnits }) => {
     const [form] = Form.useForm();
+    const [showNewUnitModal, setShowNewUnitModal] = useState(false); // State do wyświetlania modala
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const onFinish = async (values) => {
@@ -62,10 +65,24 @@ const IngredientsForm = ({ units, setIngredients, ingredients }) => {
                     label="Unit"
                     rules={[{ required: true, message: "Please select a unit" }]}
                 >
-                    <Select placeholder="Select a unit">
+                    <Select
+                        placeholder="Select a unit"
+                        dropdownRender={(menu) => (
+                            <>
+                                {menu}
+                                <Button
+                                    type="link"
+                                    style={{ display: "block", marginTop: "10px", textAlign: "center" }}
+                                    onClick={() => setShowNewUnitModal(true)}
+                                >
+                                    Add New Unit
+                                </Button>
+                            </>
+                        )}
+                    >
                         {units.map((unit) => (
                             <Select.Option key={unit.id} value={unit.id}>
-                                {unit.name}
+                                {unit.name} ({unit.abbreviation})
                             </Select.Option>
                         ))}
                     </Select>
@@ -76,11 +93,19 @@ const IngredientsForm = ({ units, setIngredients, ingredients }) => {
                 </Form.Item>
 
                 <Form.Item>
-                    <Button type="primary" htmlType="submit">
+                    <Button type="primary" htmlType="submit" loading={loading}>
                         Add Ingredient
                     </Button>
                 </Form.Item>
             </Form>
+
+            {/* Modal for adding new unit */}
+            <UnitForm
+                visible={showNewUnitModal}
+                setShowNewUnitModal={setShowNewUnitModal}
+                units={units}
+                setUnits={setUnits}
+            />
         </Card>
     );
 };

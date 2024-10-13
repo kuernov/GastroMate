@@ -12,5 +12,6 @@ import lombok.Setter;
 public class MenuItemIngredientDTO {
     private Integer menuItemId;
     private Integer ingredientId;
+    private String ingredientName;  // Dodajemy nazwę składnika
     private Float quantityRequired;
 }

@@ -91,6 +91,7 @@ const IngredientsPage = () => {
                     units={units}
                     setIngredients={setIngredients}
                     ingredients={ingredients}
+                    setUnits={setUnits}
                 />
             )}
 

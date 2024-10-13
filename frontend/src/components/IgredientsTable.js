@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {Table, Button, InputNumber, Input, Popconfirm, Form} from "antd";
+import {Table, Button, Input, Popconfirm, Form} from "antd";
 
 const IngredientsTable = ({ ingredients, units, loading, onEditQuantity, onDelete }) => {
     const [editingId, setEditingId] = useState(null);  // Track the ingredient being edited

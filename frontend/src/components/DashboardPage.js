@@ -17,7 +17,7 @@ const DashboardPage = () => {
 
     const handleMenuItemsClick = () => {
         // Tutaj później dodasz nawigację do strony pozycji w menu
-        navigate("/menu-items");
+        navigate("/menu");
     };
 
     return (
