@@ -36,4 +36,8 @@ public class Unit {
     @JsonBackReference
     private List<Ingredient> ingredients;
 
+    @OneToMany(mappedBy = "unit")
+    @JsonBackReference
+    private List<MenuItemIngredient> menuItemIngredients;
+
 }

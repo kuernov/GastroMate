@@ -31,7 +31,8 @@ public class MenuItemMapper {
                         ingredient.getIngredient().getId(),
                         ingredient.getMenuItem().getId(),
                         ingredient.getIngredient().getName(),  // Pobieramy nazwę składnika
-                        ingredient.getQuantityRequired()
+                        ingredient.getQuantityRequired(),
+                        ingredient.getUnit().getId()
                 ))
                 .collect(Collectors.toList());
         dto.setIngredients(ingredientDTOs);
@@ -45,6 +46,7 @@ public class MenuItemMapper {
         menuItem.setDescription(menuItemDTO.getDescription());
         menuItem.setPrice(menuItemDTO.getPrice());
         menuItem.setCategories(categories);
+
         return menuItem;
     }
 }

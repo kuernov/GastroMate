@@ -1,5 +1,7 @@
 package com.pwr.gastromate.data;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,6 +34,12 @@ public class MenuItemIngredient {
 
     @Column(nullable = false)
     private Float quantityRequired;
+
+    @ManyToOne
+    @JoinColumn(name = "unit_id")
+    @JsonManagedReference
+    @OnDelete(action = OnDeleteAction.CASCADE)  // Usuwanie kaskadowe
+    private Unit unit;
 
     // Constructors, getters, setters
 }

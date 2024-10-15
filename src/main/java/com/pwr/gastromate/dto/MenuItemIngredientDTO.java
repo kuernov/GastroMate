@@ -14,4 +14,5 @@ public class MenuItemIngredientDTO {
     private Integer ingredientId;
     private String ingredientName;  // Dodajemy nazwę składnika
     private Float quantityRequired;
+    private Integer unitId;
 }

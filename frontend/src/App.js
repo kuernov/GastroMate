@@ -10,6 +10,7 @@ import IngredientsPage from "./components/IngredientsPage";
 
 import "antd/dist/reset.css";
 import MenuItemsPage from "./components/MenuItemsPage";
+import OrdersPage from "./components/OrdersPage";
 
 const { Header, Content, Footer } = Layout;
 
@@ -45,7 +46,10 @@ const App = () => {
                                     <a href="/ingredients">Ingredients</a>
                                 </Menu.Item>
                                 <Menu.Item key="menu">
-                                    <a href="/menu">Ingredients</a>
+                                    <a href="/menu">Menu</a>
+                                </Menu.Item>
+                                <Menu.Item key="orders">
+                                    <a href="/orders">Orders</a>
                                 </Menu.Item>
                                 <Menu.Item key="logout">
                                     <Button type="primary" onClick={handleLogout}>
@@ -64,6 +68,7 @@ const App = () => {
                         <Route path="/dashboard" element={<DashboardPage /> } />
                         <Route path="/ingredients" element={<IngredientsPage /> } />
                         <Route path="/menu" element={<MenuItemsPage /> } />
+                        <Route path="/orders" element={<OrdersPage /> } />
                         <Route path="*" element={<Navigate to="/login" />} />
                     </Routes>
                 </Content>

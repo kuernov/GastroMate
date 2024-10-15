@@ -3,10 +3,7 @@ package com.pwr.gastromate.service;
 import com.pwr.gastromate.data.*;
 import com.pwr.gastromate.dto.MenuItemDTO;
 import com.pwr.gastromate.dto.MenuItemIngredientDTO;
-import com.pwr.gastromate.repository.CategoryRepository;
-import com.pwr.gastromate.repository.IngredientRepository;
-import com.pwr.gastromate.repository.MenuItemRepository;
-import com.pwr.gastromate.repository.UserRepository;
+import com.pwr.gastromate.repository.*;
 import com.pwr.gastromate.service.mapper.MenuItemMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +18,7 @@ public class MenuItemService {
     private final MenuItemRepository menuItemRepository;
     private final CategoryRepository categoryRepository;
     private final IngredientRepository ingredientRepository;
+    private final UnitRepository unitRepository;
 
     public List<MenuItem> findAll() {
         return menuItemRepository.findAll();
@@ -44,10 +42,15 @@ public class MenuItemService {
         MenuItem menuItem = MenuItemMapper.toEntity(menuItemDTO, categories);
         menuItem.setUser(user);
         List<MenuItemIngredient> menuItemIngredients = new ArrayList<>();
+
         for(MenuItemIngredientDTO menuItemIngredientDTO:menuItemIngredientDTOS){
             Ingredient ingredient = ingredientRepository.findById(menuItemIngredientDTO.getIngredientId())
                     .orElseThrow(() -> new RuntimeException("Ingredient not found: " + menuItemIngredientDTO.getIngredientId()));
+            Unit unit = unitRepository.findById(menuItemIngredientDTO.getUnitId())
+                    .orElseThrow(() -> new RuntimeException("Unit not found: " + menuItemIngredientDTO.getUnitId()));
+
             MenuItemIngredient menuItemIngredient = getMenuItemIngredient(menuItemIngredientDTO, menuItem, ingredient);
+            menuItemIngredient.setUnit(unit);
             menuItemIngredients.add(menuItemIngredient);
         }
         menuItem.setMenuItemIngredients(new HashSet<>(menuItemIngredients));
