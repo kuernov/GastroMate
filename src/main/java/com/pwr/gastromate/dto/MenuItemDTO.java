@@ -4,6 +4,7 @@ package com.pwr.gastromate.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -13,7 +14,7 @@ public class MenuItemDTO {
     private Integer id;
     private String name;
     private String description;
-    private Double price;
+    private BigDecimal price;
     private Set<Integer> categoryIds;
     private List<MenuItemIngredientDTO> ingredients;
 

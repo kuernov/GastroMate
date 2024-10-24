@@ -2,6 +2,7 @@ package com.pwr.gastromate.controller;
 
 import com.pwr.gastromate.data.Order;
 import com.pwr.gastromate.data.User;
+import com.pwr.gastromate.dto.OrderDTO;
 import com.pwr.gastromate.dto.OrderItemDTO;
 import com.pwr.gastromate.service.OrderGenerationService;
 import com.pwr.gastromate.service.OrderService;
@@ -26,13 +27,15 @@ public class OrderController {
 
     @GetMapping
     @RolesAllowed("USER")
-    public ResponseEntity<List<Order>> getUserOrders(Principal principal) {
+    public ResponseEntity<List<OrderDTO>> getUserOrders(Principal principal) {
         if (principal == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         String username = principal.getName();
         User user = userService.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return new ResponseEntity<>(user.getOrders(),HttpStatus.OK);
+        List<OrderDTO> userOrders = orderService.getAllOrdersForUser(user);
+
+        return new ResponseEntity<>(userOrders,HttpStatus.OK);
     }
 
     @PostMapping("/create")

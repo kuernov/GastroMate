@@ -4,12 +4,14 @@ import com.pwr.gastromate.data.MenuItem;
 import com.pwr.gastromate.data.Order;
 import com.pwr.gastromate.data.OrderItem;
 import com.pwr.gastromate.data.User;
+import com.pwr.gastromate.dto.OrderDTO;
 import com.pwr.gastromate.dto.OrderItemDTO;
 import com.pwr.gastromate.exception.ResourceNotFoundException;
 import com.pwr.gastromate.repository.MenuItemRepository;
 import com.pwr.gastromate.repository.OrderItemRepository;
 import com.pwr.gastromate.repository.OrderRepository;
 import com.pwr.gastromate.service.mapper.OrderItemMapper;
+import com.pwr.gastromate.service.mapper.OrderMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,12 +19,16 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
     private final OrderItemRepository orderItemRepository;
     private final OrderRepository orderRepository;
     private final MenuItemRepository menuItemRepository;
+
+    @Autowired
+    private OrderMapper orderMapper;
 
 
     @Autowired
@@ -62,8 +68,12 @@ public class OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
     }
 
-    public List<Order> getAllOrdersForUser(User user) {
-        return orderRepository.findByUser(user);
+    public List<OrderDTO> getAllOrdersForUser(User user) {
+        List<Order> orders = orderRepository.findByUser(user);
+        return orders.stream()
+                .map(orderMapper::toDTO)
+                .collect(Collectors.toList());
+
     }
 
     @Transactional

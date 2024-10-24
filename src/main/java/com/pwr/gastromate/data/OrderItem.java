@@ -21,11 +21,13 @@ public class OrderItem {
 
     @ManyToOne
     @MapsId("menuItemId")
+    @JsonBackReference
     @JoinColumn(name = "menu_item_id")
     private MenuItem menuItem;
 
     @ManyToOne
     @MapsId("orderId")
+    @JsonBackReference
     @JoinColumn(name = "order_id")
     private Order order;
 

@@ -1,22 +1,44 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Tag } from 'antd';
+import { Table, Button, Tag, message } from 'antd';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 const OrdersPage = () => {
     const [orders, setOrders] = useState([]);
+    const [menuItems, setMenuItems] = useState([]);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get('http://localhost:8080/orders')
-            .then(response => {
-                setOrders(response.data);
+        const fetchData = async () => {
+            try {
+                const token = localStorage.getItem("accessToken");
+                if (!token) {
+                    message.error("User not authenticated");
+                    navigate("/login");
+                    return;
+                }
+
+                const [ordersResponse, menuItemResponse] = await Promise.all([
+                    axios.get("http://localhost:8080/orders", {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }),
+                    axios.get("http://localhost:8080/menu", {
+                        headers: { Authorization: `Bearer ${token}` },
+                    })
+                ]);
+
+                setMenuItems(menuItemResponse.data);
+                setOrders(ordersResponse.data);
                 setLoading(false);
-            })
-            .catch(error => {
-                console.error("There was an error fetching the orders!", error);
+            } catch (error) {
+                message.error("Failed to fetch data");
                 setLoading(false);
-            });
-    }, []);
+            }
+        };
+
+        fetchData();
+    }, [navigate]);
 
     const columns = [
         {
@@ -28,15 +50,38 @@ const OrdersPage = () => {
             title: 'Order Date',
             dataIndex: 'orderDate',
             key: 'orderDate',
-            render: (text) => new Date(text).toLocaleString()
+            render: (text) => {
+                const date = new Date(text);
+                return date.toLocaleString();
+            }
         },
         {
             title: 'Items',
             dataIndex: 'orderItems',
             key: 'orderItems',
-            render: (items) => items.map(item => `${item.menuItem.name} (x${item.quantity})`).join(', '),
-        }
+            render: (items) => {
+                return (
+                    <ul>
+                        {items.map(item => {
+                            const menuItemId = item.menuItemId;
+                            const menuItem = menuItems.find(menuItem => menuItem.id === menuItemId);
+                            return (
+                                <li key={menuItemId}>
+                                    {menuItem ? `${menuItem.name} (x${item.quantity})` : `Item not found (x${item.quantity})`}
+                                </li>
+                            );
+                        })}
+                    </ul>
+                );
+            },
+        },
 
+        {
+            title: 'Total Price',
+            dataIndex: 'totalPrice',
+            key: 'totalPrice',
+            render: (price) => `${price.toFixed(2)} zł`, // Wyświetlanie ceny z 2 miejscami po przecinku
+        }
     ];
 
     return (

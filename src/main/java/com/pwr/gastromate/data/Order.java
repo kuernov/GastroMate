@@ -29,9 +29,17 @@ public class Order {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @JsonBackReference
     private User user;
-    @CreationTimestamp
     private Timestamp orderDate;
-    @OneToMany(mappedBy = "order") 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<OrderItem> orderItems;
+    @Transient
+    public BigDecimal getTotalOrderPrice(){
+        BigDecimal sum = new BigDecimal("0");
+        List<OrderItem> orderItems = getOrderItems();
+        for (OrderItem item :orderItems){
+            sum = sum.add(item.getPriceAtOrder().multiply(BigDecimal.valueOf(item.getQuantity())));
+        }
+        return sum;
+    }
 }
