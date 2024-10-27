@@ -10,4 +10,7 @@ import java.util.List;
 @Repository
 public interface IngredientRepository extends JpaRepository<Ingredient, Integer> {
     List<Ingredient> findByUserId(Integer userId);
+    boolean existsByName(String name);
+    Ingredient findByName(String name);
+
 }

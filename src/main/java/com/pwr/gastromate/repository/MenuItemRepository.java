@@ -9,4 +9,8 @@ import java.util.List;
 @Repository
 public interface MenuItemRepository extends JpaRepository<MenuItem, Integer> {
     List<MenuItem> findByUserId(Integer userId);
+
+    boolean existsByName(String pizzaName);
+
+    MenuItem findByName(String pizzaName);
 }
