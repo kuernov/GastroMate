@@ -21,6 +21,10 @@ public class DataLoaderController {
 
     @Autowired
     private LoadOrdersService ordersService;
+
+    @Autowired
+    private LoadRequiredQuantitiesService quantitiesService;
+
     private final String filePath = "src/main/resources/Data Model - Pizza Sales.xlsx";
 
     @PostMapping("/load-menu-items")
@@ -39,6 +43,16 @@ public class DataLoaderController {
             return ResponseEntity.ok("Ingredients loaded successfully from " + filePath);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Failed to load ingredients: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/load-required-quantities")
+    public ResponseEntity<String> loadQuantities(){
+        try {
+            quantitiesService.setQuantities();
+            return ResponseEntity.ok("Quantities set successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to load quantities: " + e.getMessage());
         }
     }
 

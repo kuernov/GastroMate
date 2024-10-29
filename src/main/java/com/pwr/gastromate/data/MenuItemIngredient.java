@@ -10,6 +10,8 @@ import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.math.BigDecimal;
+
 @Entity
 @Getter
 @Setter
@@ -33,7 +35,7 @@ public class MenuItemIngredient {
     private Ingredient ingredient;
 
     @Column(nullable = false)
-    private Float quantityRequired;
+    private BigDecimal quantityRequired;
 
     @ManyToOne
     @JoinColumn(name = "unit_id")

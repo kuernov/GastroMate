@@ -93,7 +93,7 @@ public class LoadMenuItemService {
                         MenuItemIngredient menuItemIngredient = new MenuItemIngredient();
                         menuItemIngredient.setMenuItem(menuItem);
                         menuItemIngredient.setIngredient(ingredient);
-                        menuItemIngredient.setQuantityRequired(1.0f); // Przykładowa ilość, można dostosować
+                        menuItemIngredient.setQuantityRequired(new BigDecimal("1")); // Przykładowa ilość, można dostosować
                         menuItemIngredient.setUnit(unit);
                         menuItemIngredients.add(menuItemIngredient);
                     }
