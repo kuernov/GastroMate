@@ -14,6 +14,10 @@ import com.pwr.gastromate.service.mapper.OrderItemMapper;
 import com.pwr.gastromate.service.mapper.OrderMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -68,12 +72,20 @@ public class OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
     }
 
-    public List<OrderDTO> getAllOrdersForUser(User user) {
-        List<Order> orders = orderRepository.findByUser(user);
-        return orders.stream()
+    public Page<OrderDTO> getAllOrdersForUser(User user, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Order> ordersPage = orderRepository.findByUser(user, pageable);
+
+        List<OrderDTO> orderDTOs = ordersPage.stream()
                 .map(orderMapper::toDTO)
                 .collect(Collectors.toList());
 
+        return new PageImpl<>(orderDTOs, pageable, ordersPage.getTotalElements());
+    }
+
+    public Page<Order> getOrders(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return orderRepository.findAll(pageable);
     }
 
     @Transactional

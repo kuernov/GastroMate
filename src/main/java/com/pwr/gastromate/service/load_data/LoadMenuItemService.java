@@ -64,7 +64,7 @@ public class LoadMenuItemService {
                 String pizzaSize = row.getCell(8).getStringCellValue(); // Kolumna I - pizza_size
                 String fullName = pizzaName + " (" + pizzaSize + ")"; // Łączenie nazwy z rozmiarem
                 String pizzaDescription = "Delicious " + pizzaName; // Przykładowy opis, możesz dostosować
-                BigDecimal price = BigDecimal.valueOf(row.getCell(7).getNumericCellValue()); // Kolumna H - unit_price
+                BigDecimal price = BigDecimal.valueOf(row.getCell(6).getNumericCellValue()); // Kolumna H - unit_price
 
                 // Pobieranie kategorii i składników
                 String categoryName = row.getCell(9).getStringCellValue(); // Kolumna J - pizza_category
