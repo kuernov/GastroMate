@@ -22,8 +22,9 @@ const IngredientsTable = ({ ingredients, units, loading, onEditQuantity, onDelet
     const handleSave = async (id) => {
         try {
             const values = await form.validateFields();
-            onEditQuantity(id, values.quantity);
+            await onEditQuantity(id, values.quantity);
             setEditingId(null);
+            window.location.reload()
         } catch (error) {
             console.error('Failed to save:', error);
         }
@@ -38,19 +39,17 @@ const IngredientsTable = ({ ingredients, units, loading, onEditQuantity, onDelet
             title: "Name",
             dataIndex: "name",
             key: "name",
+            width: "50%",
+
         },
         {
             title: 'Total Quantity (kg)',
             dataIndex: 'totalQuantity',
             key: "totalQuantity",
             render: (quantity) => `${quantity.toFixed(2)} kg`,
+            width: "50%",
         },
-        {
-            title: "Unit",
-            dataIndex: "unitId",
-            key: "unitId",
-            render: (unitId) => getUnitNameById(unitId),
-        },
+
     ];
 
     const expandedRowRender = (record) => {
@@ -59,17 +58,20 @@ const IngredientsTable = ({ ingredients, units, loading, onEditQuantity, onDelet
                 title: "ID",
                 dataIndex: "id",
                 key: "id",
+                width: "10%",
             },
             {
                 title: "Name",
                 dataIndex: "name",
                 key: "name",
+                width: "15%",
             },
             {
                 title: "Expiry Date",
                 dataIndex: "expiryDate",
                 key: "expiryDate",
                 render: (date) => date ? new Date(date).toLocaleDateString() : 'N/A',
+                width: "15%",
             },
             {
                 title: "Quantity",
@@ -91,6 +93,14 @@ const IngredientsTable = ({ ingredients, units, loading, onEditQuantity, onDelet
                     }
                     return <span>{detailRecord.quantity}</span>;
                 },
+                width: "10%",
+            },
+            {
+                title: "Unit",
+                dataIndex: "unitId",
+                key: "unitId",
+                render: (unitId) => getUnitNameById(unitId),
+                width: "20%",
             },
             {
                 title: 'Actions',
@@ -114,6 +124,7 @@ const IngredientsTable = ({ ingredients, units, loading, onEditQuantity, onDelet
                         </>
                     );
                 },
+                width: "10%",
             },
         ];
 

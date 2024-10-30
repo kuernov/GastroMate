@@ -24,9 +24,6 @@ public class IngredientService {
     private IngredientRepository ingredientRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private UnitRepository unitRepository;
 
     @Autowired

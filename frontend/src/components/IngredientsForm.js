@@ -95,6 +95,7 @@ const IngredientsForm = ({ units, setIngredients, ingredients, setUnits }) => {
                 <Form.Item>
                     <Button type="primary" htmlType="submit" loading={loading}>
                         Add Ingredient
+
                     </Button>
                 </Form.Item>
             </Form>
