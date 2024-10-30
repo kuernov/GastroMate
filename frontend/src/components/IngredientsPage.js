@@ -24,7 +24,7 @@ const IngredientsPage = () => {
                 }
 
                 const [ingredientsResponse, unitsResponse] = await Promise.all([
-                    axios.get("http://localhost:8080/ingredients", {
+                    axios.get("http://localhost:8080/ingredients/grouped", {
                         headers: { Authorization: `Bearer ${token}` },
                     }),
                     axios.get("http://localhost:8080/units", {

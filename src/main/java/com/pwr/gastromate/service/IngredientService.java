@@ -3,6 +3,7 @@ package com.pwr.gastromate.service;
 import com.pwr.gastromate.data.Ingredient;
 import com.pwr.gastromate.data.Unit;
 import com.pwr.gastromate.data.User;
+import com.pwr.gastromate.dto.GroupedIngredientDTO;
 import com.pwr.gastromate.dto.IngredientDTO;
 import com.pwr.gastromate.exception.ResourceNotFoundException;
 import com.pwr.gastromate.repository.IngredientRepository;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +36,40 @@ public class IngredientService {
         List<Ingredient> ingredients = ingredientRepository.findByUserId(userId);
         return ingredients.stream()
                 .map(ingredientMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<GroupedIngredientDTO> getGroupedIngredients(Integer userId) {
+        List<Ingredient> ingredients = ingredientRepository.findByUserId(userId);
+
+        Map<String, List<Ingredient>> groupedByProductName = ingredients.stream()
+                .collect(Collectors.groupingBy(Ingredient::getName));
+
+        return groupedByProductName.entrySet().stream()
+                .map(entry -> {
+                    String productName = entry.getKey();
+                    List<Ingredient> ingredientList = entry.getValue();
+
+                    double totalQuantity = ingredientList.stream()
+                            .mapToDouble(Ingredient::getQuantity)
+                            .sum();
+
+
+                    // Create a DTO with total quantity and individual details
+                    return new GroupedIngredientDTO(
+                            productName,
+                            totalQuantity,
+                            ingredientList.stream()
+                                    .map(ingredient -> new IngredientDTO(
+                                            ingredient.getId(),
+                                            ingredient.getName(),
+                                            ingredient.getQuantity(),
+                                            ingredient.getUnit().getId(),
+                                            ingredient.getExpiryDate()
+                                    ))
+                                    .collect(Collectors.toList())
+                    );
+                })
                 .collect(Collectors.toList());
     }
 

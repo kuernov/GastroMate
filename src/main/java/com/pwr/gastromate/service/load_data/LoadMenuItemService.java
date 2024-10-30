@@ -42,10 +42,7 @@ public class LoadMenuItemService {
 
     @Transactional
     public void deleteMenuItemsByUserId(Integer userId) {
-        // Znajdź wszystkie elementy menu powiązane z użytkownikiem
         List<MenuItem> userMenuItems = menuItemRepository.findByUserId(userId);
-
-        // Usuń wszystkie znalezione elementy
         menuItemRepository.deleteAll(userMenuItems);
     }
 
@@ -60,14 +57,14 @@ public class LoadMenuItemService {
                     continue;
                 }
                 // Pobieranie danych dotyczących elementu menu
-                String pizzaName = row.getCell(11).getStringCellValue(); // Kolumna L - pizza_name
-                String pizzaSize = row.getCell(8).getStringCellValue(); // Kolumna I - pizza_size
-                String fullName = pizzaName + " (" + pizzaSize + ")"; // Łączenie nazwy z rozmiarem
-                String pizzaDescription = "Delicious " + pizzaName; // Przykładowy opis, możesz dostosować
+                String pizzaName = row.getCell(11).getStringCellValue();
+                String pizzaSize = row.getCell(8).getStringCellValue();
+                String fullName = pizzaName + " (" + pizzaSize + ")";
+                String pizzaDescription = "Delicious " + pizzaName;
                 BigDecimal price = BigDecimal.valueOf(row.getCell(6).getNumericCellValue()); // Kolumna H - unit_price
 
                 // Pobieranie kategorii i składników
-                String categoryName = row.getCell(9).getStringCellValue(); // Kolumna J - pizza_category
+                String categoryName = row.getCell(9).getStringCellValue();
                 String[] ingredientsArray = row.getCell(10).getStringCellValue().split(","); // Kolumna K - pizza_ingredients
 
                 // Sprawdzanie, czy istnieje już kategoria

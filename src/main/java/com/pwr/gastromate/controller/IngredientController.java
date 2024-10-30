@@ -1,6 +1,7 @@
 package com.pwr.gastromate.controller;
 
 import com.pwr.gastromate.data.User;
+import com.pwr.gastromate.dto.GroupedIngredientDTO;
 import com.pwr.gastromate.dto.IngredientDTO;
 import com.pwr.gastromate.service.IngredientService;
 import com.pwr.gastromate.service.UserService;
@@ -31,6 +32,15 @@ public class IngredientController {
         User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         List<IngredientDTO> ingredients = ingredientService.getIngredientsByUserId(user.getId());
         return ResponseEntity.ok(ingredients);
+    }
+
+    @GetMapping("/grouped")
+    public ResponseEntity<List<GroupedIngredientDTO>> getGroupedIngredients(Principal principal) {
+        if (principal == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return ResponseEntity.ok(ingredientService.getGroupedIngredients(user.getId()));
     }
 
     // Dodawanie składnika dla użytkownika
