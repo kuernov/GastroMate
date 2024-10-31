@@ -7,3 +7,23 @@ services:
       - 'POSTGRES_USER=postgres'
     ports:
       - '5432:5432'
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spring_backend
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/gastromate
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - "8080:8080"
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: react_frontend
+    ports:
+      - "3000:80"
