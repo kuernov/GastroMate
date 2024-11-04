@@ -3,6 +3,7 @@ package com.pwr.gastromate.service;
 import com.pwr.gastromate.data.*;
 import com.pwr.gastromate.dto.MenuItemDTO;
 import com.pwr.gastromate.dto.MenuItemIngredientDTO;
+import com.pwr.gastromate.dto.MenuItemIngredientsRequest;
 import com.pwr.gastromate.repository.*;
 import com.pwr.gastromate.service.mapper.MenuItemMapper;
 import lombok.AllArgsConstructor;
@@ -37,6 +38,15 @@ public class MenuItemService {
                 .orElseThrow(() -> new IllegalArgumentException("MenuItem not found"));
         return MenuItemMapper.toDTO(menuItem);
     }
+
+    public List<MenuItemDTO> findByIngredients(MenuItemIngredientsRequest request, User user) {
+        List<MenuItem> menuItems = menuItemRepository.findByMenuItemIngredients(request.getIngredientIds(), user.getId());
+        return menuItems.stream()
+                .map(MenuItemMapper::toDTO)
+                .collect(Collectors.toList());
+
+    }
+
     public MenuItemDTO save(MenuItemDTO menuItemDTO, List<MenuItemIngredientDTO> menuItemIngredientDTOS, User user) {
         Set<Category> categories = new HashSet<>(categoryRepository.findAllById(menuItemDTO.getCategoryIds()));
         MenuItem menuItem = MenuItemMapper.toEntity(menuItemDTO, categories);

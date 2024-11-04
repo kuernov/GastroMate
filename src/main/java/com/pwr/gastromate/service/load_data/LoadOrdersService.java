@@ -60,8 +60,8 @@ public class LoadOrdersService {
                 Timestamp orderTimestamp = Timestamp.valueOf(combinedDateTime);
 
                 // Tworzenie lub znalezienie użytkownika
-                User user = userRepository.findById(4)
-                        .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + 4));
+                User user = userRepository.findById(1)
+                        .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + 1));
 
                 Order order;
                 if (orderMap.containsKey(orderId)) {

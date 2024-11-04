@@ -2,6 +2,7 @@ package com.pwr.gastromate.controller;
 
 import com.pwr.gastromate.data.User;
 import com.pwr.gastromate.dto.MenuItemDTO;
+import com.pwr.gastromate.dto.MenuItemIngredientsRequest;
 import com.pwr.gastromate.dto.MenuItemRequest;
 import com.pwr.gastromate.service.MenuItemService;
 import com.pwr.gastromate.service.UserService;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @AllArgsConstructor
@@ -42,6 +44,17 @@ public class MenuItemController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PostMapping("/filter")
+    public ResponseEntity<List<MenuItemDTO>> getMenuItemByFilter(@RequestBody MenuItemIngredientsRequest request, Principal principal) {
+        if (principal == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        List<MenuItemDTO> menuItems = menuItemService.findByIngredients(request, user);
+        return ResponseEntity.ok(menuItems);
+    }
+
 
     @PostMapping
     public ResponseEntity<MenuItemDTO> createMenuItem(@RequestBody MenuItemRequest menuItemRequest, Principal principal) {

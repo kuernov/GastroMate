@@ -50,7 +50,7 @@ public class LoadMenuItemService {
     public void loadMenuItemsFromExcel(String filePath) {
         try (FileInputStream fis = new FileInputStream(new File(filePath));
              Workbook workbook = new XSSFWorkbook(fis)) {
-            Unit unit = unitRepository.findById(16).orElseThrow();
+            Unit unit = unitRepository.findById(1).orElseThrow();
             Sheet sheet = workbook.getSheet("pizza_sales");
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) {
@@ -75,7 +75,7 @@ public class LoadMenuItemService {
                     menuItem.setName(fullName);
                     menuItem.setDescription(pizzaDescription);
                     menuItem.setPrice(price);
-                    menuItem.setUser(userRepository.findById(4).orElseThrow()); // Przykład ID użytkownika
+                    menuItem.setUser(userRepository.findById(1).orElseThrow()); // Przykład ID użytkownika
 
                     // Dodanie kategorii
                     menuItem.getCategories().add(category);

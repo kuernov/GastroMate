@@ -32,9 +32,9 @@ public class LoadIngredientService {
     @Autowired
     private UnitRepository unitRepository;
     @Transactional
-    public void loadIngredientsFromExcel(String filePath) {
+    public void loadIngredientsFromExcel(String filePath, User user) {
         Set<String> uniqueIngredients = new HashSet<>();
-
+        int userId=user.getId();
         try (FileInputStream fis = new FileInputStream(new File(filePath));
              Workbook workbook = new XSSFWorkbook(fis)) {
 
@@ -51,9 +51,7 @@ public class LoadIngredientService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        User user = userRepository.findById(4)
-                .orElseThrow(()-> new ResourceNotFoundException("User not found"));
-        Unit unit = unitRepository.findByIdAndUserId(16,4)
+        Unit unit = unitRepository.findByIdAndUserId(1,user.getId())
                 .orElseThrow(()-> new ResourceNotFoundException("Unit not found"));
         // Dodanie unikalnych składników do bazy danych
         for (String ingredientName : uniqueIngredients) {
@@ -61,7 +59,7 @@ public class LoadIngredientService {
                 IngredientDTO ingredientDTO = new IngredientDTO();
                 ingredientDTO.setName(ingredientName);
                 ingredientDTO.setQuantity(0F);
-                ingredientDTO.setUnitId(16);  // Przykładowe unityId
+                ingredientDTO.setUnitId(user.getId());  // Przykładowe unityId
                 ingredientDTO.setExpiryDate(null);
                 Ingredient ingredient = ingredientMapper.toEntity(ingredientDTO, unit);
                 ingredient.setUser(user);

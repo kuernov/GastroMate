@@ -1,20 +1,27 @@
 package com.pwr.gastromate.service.load_data;
 
+import com.pwr.gastromate.data.User;
 import com.pwr.gastromate.service.MenuItemService;
+import com.pwr.gastromate.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @RestController
+@RequestMapping("/load")
 public class DataLoaderController {
 
     @Autowired
     private LoadIngredientService ingredientService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private LoadMenuItemService menuItemService;
@@ -25,7 +32,7 @@ public class DataLoaderController {
     @Autowired
     private LoadRequiredQuantitiesService quantitiesService;
 
-    private final String filePath = "src/main/resources/Data Model - Pizza Sales.xlsx";
+    private final String filePath = "C:/Users/barto/IdeaProjects/GastroMate/src/main/resources/Data Model - Pizza Sales.xlsx";
 
     @PostMapping("/load-menu-items")
     public ResponseEntity<String> loadMenuItems() {
@@ -37,13 +44,13 @@ public class DataLoaderController {
         }
     }
     @PostMapping("/load-ingredients")
-    public ResponseEntity<String> loadIngredients(){
-        try {
-            ingredientService.loadIngredientsFromExcel(filePath);
-            return ResponseEntity.ok("Ingredients loaded successfully from " + filePath);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Failed to load ingredients: " + e.getMessage());
+    public ResponseEntity<String> loadIngredients(Principal principal) {
+        if (principal == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+        User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        ingredientService.loadIngredientsFromExcel(filePath, user);
+        return ResponseEntity.ok("Ingredients loaded successfully from skibidi " + filePath);
     }
 
     @PostMapping("/load-required-quantities")
@@ -69,10 +76,10 @@ public class DataLoaderController {
     @DeleteMapping("/delete-menu-items-by-user")
     public ResponseEntity<String> deleteMenuItemsByUser() {
         try {
-            menuItemService.deleteMenuItemsByUserId(4);
+            menuItemService.deleteMenuItemsByUserId(1);
             return ResponseEntity.ok("Menu items for user ID " + 4 + " deleted successfully.");
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Failed to delete menu items for user ID " + 4 + ": " + e.getMessage());
+            return ResponseEntity.status(500).body("Failed to delete menu items for user ID " + 1 + ": " + e.getMessage());
         }
     }
 }
