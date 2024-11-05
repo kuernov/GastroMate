@@ -32,7 +32,7 @@ public class DataLoaderController {
     @Autowired
     private LoadRequiredQuantitiesService quantitiesService;
 
-    private final String filePath = "C:/Users/barto/IdeaProjects/GastroMate/src/main/resources/Data Model - Pizza Sales.xlsx";
+    private final String filePath = "src/main/resources/Data Model - Pizza Sales.xlsx";
 
     @PostMapping("/load-menu-items")
     public ResponseEntity<String> loadMenuItems() {

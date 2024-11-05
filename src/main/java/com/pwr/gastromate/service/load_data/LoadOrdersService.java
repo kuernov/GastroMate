@@ -78,6 +78,7 @@ public class LoadOrdersService {
                 String pizzaName = row.getCell(11).getStringCellValue() +" ("+row.getCell(8).getStringCellValue()+")";
                 MenuItem menuItem = menuItemRepository.findByName(pizzaName);
                 if (menuItem == null) {
+
                     throw new IllegalArgumentException("Menu item not found with name: " + pizzaName);
                 }
                 int quantity = (int) row.getCell(3).getNumericCellValue(); // Kolumna D - quantity
