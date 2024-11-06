@@ -50,6 +50,8 @@ const OrdersPage = () => {
         setCurrentPage(pagination.current - 1); // Ant Design używa numeracji stron od 1, dlatego odejmujemy 1
     };
 
+
+
     const columns = [
         {
             title: 'Order ID',

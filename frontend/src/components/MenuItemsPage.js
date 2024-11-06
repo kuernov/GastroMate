@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Card, message, Select, InputNumber } from "antd";
+import { Button, Card, message, Select, InputNumber, Pagination } from "antd";
 import axios from "axios";
 import MenuItemsForm from "./MenuItemsForm";
 import MenuItemsTable from "./MenuItemsTable";
@@ -20,13 +20,24 @@ const MenuItemsPage = () => {
     const [maxPrice, setMaxPrice] = useState(null);
     const [showForm, setShowForm] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);           // Current page
+    const [pageSize, setPageSize] = useState(10);   // Page size
+    const [totalItems, setTotalItems] = useState(0); // Total items count
     const navigate = useNavigate();
 
-    useEffect(() => {
-        fetchMenuItems();
-    }, [navigate]);
+    const filters = {
+        selectedSize,
+        selectedCategory,
+        selectedIngredients,
+        minPrice,
+        maxPrice,
+    };
 
-    const fetchMenuItems = async () => {
+    useEffect(() => {
+        fetchMenuItems(page, pageSize, filters);
+    }, [navigate, page, pageSize]);
+
+    const fetchMenuItems = async (page, pageSize, filters) => {
         try {
             const token = localStorage.getItem("accessToken");
             if (!token) {
@@ -35,8 +46,20 @@ const MenuItemsPage = () => {
                 return;
             }
 
+            const ingredientsParam = filters.selectedIngredients ? filters.selectedIngredients.join(",") : undefined;
+            const params = {
+                page: page - 1,
+                pageSize,
+                size: filters.selectedSize || undefined,
+                category: filters.selectedCategory || undefined,
+                ingredients: ingredientsParam,
+                minPrice: filters.minPrice || undefined,
+                maxPrice: filters.maxPrice || undefined,
+            };
+
             const [menuItemsResponse, categoriesResponse, unitsResponse, ingredientsResponse] = await Promise.all([
-                axios.get("http://localhost:8080/menu", {
+                axios.get("http://localhost:8080/menu/filter", {
+                    params: params,
                     headers: { Authorization: `Bearer ${token}` },
                 }),
                 axios.get("http://localhost:8080/categories", {
@@ -50,14 +73,15 @@ const MenuItemsPage = () => {
                 }),
             ]);
 
-            // Sortowanie składników i kategorii alfabetycznie
             const sortedIngredients = ingredientsResponse.data.sort((a, b) => a.name.localeCompare(b.name));
             const sortedCategories = categoriesResponse.data.sort((a, b) => a.name.localeCompare(b.name));
 
             setIngredients(sortedIngredients);
             setUnits(unitsResponse.data);
             setCategories(sortedCategories);
-            setMenuItems(menuItemsResponse.data);
+            setMenuItems(menuItemsResponse.data.content);
+            setTotalItems(menuItemsResponse.data.totalElements);
+            console.log(totalItems);
             setLoading(false);
         } catch (error) {
             message.error("Failed to fetch menu items");
@@ -65,6 +89,24 @@ const MenuItemsPage = () => {
         }
     };
 
+    const fetchFilteredMenuItems = () => {
+        setPage(1);  // Reset to first page for new filters
+        fetchMenuItems(1, pageSize, filters);
+    };
+
+    const resetFilters = () => {
+        setSelectedIngredients([]);
+        setSelectedCategory(null);
+        setSelectedSize(null);
+        setMinPrice(null);
+        setMaxPrice(null);
+        setPage(1);
+        fetchMenuItems(1, pageSize, {});
+    };
+
+    const handlePageChange = (newPage) => {
+        setPage(newPage);
+    };
 
     const deleteMenuItem = async (menuItemId) => {
         try {
@@ -78,39 +120,6 @@ const MenuItemsPage = () => {
         } catch (error) {
             message.error("Failed to delete ingredient");
         }
-    };
-
-    const fetchFilteredMenuItems = async () => {
-        try {
-            const token = localStorage.getItem("accessToken");
-
-            const ingredientsParam = selectedIngredients.join(",");
-
-            const response = await axios.get("http://localhost:8080/menu/filter", {
-                params: {
-                    size: selectedSize,
-                    category: selectedCategory,
-                    ingredients: ingredientsParam, // Przekazujemy składniki jako jeden ciąg
-                    minPrice,
-                    maxPrice,
-                },
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            setMenuItems(response.data);
-        } catch (error) {
-            message.error("Failed to filter menu items");
-        }
-    };
-
-
-    // Funkcja resetująca filtry
-    const resetFilters = () => {
-        setSelectedIngredients([]);
-        setSelectedCategory(null);
-        setSelectedSize(null);
-        setMinPrice(null);
-        setMaxPrice(null);
-        fetchMenuItems(); // Wczytaj ponownie wszystkie elementy menu
     };
 
     return (
@@ -130,7 +139,6 @@ const MenuItemsPage = () => {
                 />
             )}
 
-            {/* Sekcja z filtrami */}
             <Card title="Filter" style={{ marginTop: "30px" }}>
                 <div style={{ marginTop: "10px" }}>
                     <Select
@@ -201,6 +209,13 @@ const MenuItemsPage = () => {
                     loading={loading}
                     units={units}
                     onDelete={deleteMenuItem}
+                />
+                <Pagination
+                    current={page}
+                    pageSize={pageSize}
+                    total={totalItems}
+                    onChange={handlePageChange}
+                    style={{ marginTop: "20px", textAlign: "center" }}
                 />
             </Card>
         </div>

@@ -41,11 +41,6 @@ public class LoadMenuItemService {
     private static final Logger logger = LoggerFactory.getLogger(LoadMenuItemService.class);
 
 
-    @Transactional
-    public void deleteMenuItemsByUserId(Integer userId) {
-        List<MenuItem> userMenuItems = menuItemRepository.findByUserIdSorted(userId);
-        menuItemRepository.deleteAll(userMenuItems);
-    }
 
     @Transactional
     public void loadMenuItemsFromExcel(String filePath) {

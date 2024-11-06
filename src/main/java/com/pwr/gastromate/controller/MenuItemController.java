@@ -9,6 +9,10 @@ import com.pwr.gastromate.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,15 +30,6 @@ public class MenuItemController {
     private final MenuItemService menuItemService;
     private final UserService userService;
 
-    @GetMapping
-    public ResponseEntity<List<MenuItemDTO>> getMenuItemByUser(Principal principal){
-        if (principal == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        List<MenuItemDTO> menuItems =  menuItemService.findAllByUserId(user.getId());
-        return ResponseEntity.ok(menuItems);
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<MenuItemDTO> getMenuItemById(@PathVariable Integer id) {
@@ -47,25 +42,18 @@ public class MenuItemController {
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<MenuItemDTO>> findAll(@RequestParam(required = false) String size,
+    public ResponseEntity<Page<MenuItemDTO>> findAll(@RequestParam(required = false) String size,
                                                      @RequestParam(required = false) String category,
                                                      @RequestParam(required = false) List<String> ingredients,
                                                      @RequestParam(required = false) BigDecimal minPrice,
-                                                     @RequestParam(required = false) BigDecimal maxPrice){
-        List<MenuItemDTO> menuItems = menuItemService.findAll(size,category,ingredients, minPrice, maxPrice);
+                                                     @RequestParam(required = false) BigDecimal maxPrice,
+                                                     @RequestParam(defaultValue = "0") int page,
+                                                     @RequestParam(defaultValue = "10") int pageSize) {
+        Sort sort = Sort.by("name").ascending();
+        Pageable pageable = PageRequest.of(page, pageSize, sort);
+        Page<MenuItemDTO> menuItems = menuItemService.findAll(size, category, ingredients, minPrice, maxPrice, pageable);
         return ResponseEntity.ok(menuItems);
     }
-
-//    @PostMapping("/filter")
-//    public ResponseEntity<List<MenuItemDTO>> getMenuItemByFilter(@RequestBody MenuItemIngredientsRequest request, Principal principal) {
-//        if (principal == null) {
-//            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-//        }
-//        User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-//        List<MenuItemDTO> menuItems = menuItemService.findByIngredients(request, user);
-//        return ResponseEntity.ok(menuItems);
-//    }
-
 
     @PostMapping
     public ResponseEntity<MenuItemDTO> createMenuItem(@RequestBody MenuItemRequest menuItemRequest, Principal principal) {

@@ -110,6 +110,8 @@ const MenuItemsTable = ({ menuItems, categories, loading, units, onDelete }) => 
             columns={columns}
             rowKey="id"
             loading={loading}
+            pagination={false}
+
             expandable={{
                 expandedRowRender,
                 expandedRowKeys,

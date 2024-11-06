@@ -9,6 +9,8 @@ import com.pwr.gastromate.service.mapper.MenuItemMapper;
 import com.pwr.gastromate.specification.MenuItemSpecification;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -26,7 +28,7 @@ public class MenuItemService {
     private final UnitRepository unitRepository;
     private final MenuItemMapper menuItemMapper;
 
-    public List<MenuItemDTO> findAll(String size, String category, List<String> ingredients, BigDecimal minPrice, BigDecimal maxPrice) {
+    public Page<MenuItemDTO> findAll(String size, String category, List<String> ingredients, BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
         Specification<MenuItem> spec = Specification.where(null);
 
         if (size != null && !size.isEmpty()) {
@@ -45,19 +47,19 @@ public class MenuItemService {
             spec = spec.and(MenuItemSpecification.hasPriceBetween(minPrice, maxPrice));
         }
 
-        Sort sort = Sort.by(Sort.Direction.ASC, "name");
+        // Wywołanie repozytorium z użyciem specyfikacji i paginacji
+        Page<MenuItem> page = menuItemRepository.findAll(spec, pageable);
 
-        return menuItemRepository.findAll(spec, sort).stream()
-                .map(MenuItemMapper::toDTO) // Mapowanie do DTO
-                .toList();
+        // Mapowanie wyników do DTO
+        return page.map(MenuItemMapper::toDTO);
     }
 
-    public List<MenuItemDTO> findAllByUserId(Integer userId) {
-        List<MenuItem> menuItems = menuItemRepository.findByUserIdSorted(userId);
-        return menuItems.stream()
-                .map(MenuItemMapper::toDTO)  // Mapuj każdą encję na DTO
-                .collect(Collectors.toList());
-    }
+//    public List<MenuItemDTO> findAllByUserId(Integer userId) {
+//        List<MenuItem> menuItems = menuItemRepository.findByUserIdSorted(userId);
+//        return menuItems.stream()
+//                .map(MenuItemMapper::toDTO)  // Mapuj każdą encję na DTO
+//                .collect(Collectors.toList());
+//    }
 
     // Znajdź MenuItem po ID
     public MenuItemDTO findById(Integer id) {

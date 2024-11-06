@@ -73,13 +73,5 @@ public class DataLoaderController {
         }
     }
 
-    @DeleteMapping("/delete-menu-items-by-user")
-    public ResponseEntity<String> deleteMenuItemsByUser() {
-        try {
-            menuItemService.deleteMenuItemsByUserId(1);
-            return ResponseEntity.ok("Menu items for user ID " + 4 + " deleted successfully.");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Failed to delete menu items for user ID " + 1 + ": " + e.getMessage());
-        }
-    }
+
 }
