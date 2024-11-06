@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,7 +43,7 @@ public class LoadMenuItemService {
 
     @Transactional
     public void deleteMenuItemsByUserId(Integer userId) {
-        List<MenuItem> userMenuItems = menuItemRepository.findByUserId(userId);
+        List<MenuItem> userMenuItems = menuItemRepository.findByUserIdSorted(userId);
         menuItemRepository.deleteAll(userMenuItems);
     }
 

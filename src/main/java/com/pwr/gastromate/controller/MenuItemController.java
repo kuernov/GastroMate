@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 import java.util.Set;
@@ -45,15 +46,25 @@ public class MenuItemController {
         }
     }
 
-    @PostMapping("/filter")
-    public ResponseEntity<List<MenuItemDTO>> getMenuItemByFilter(@RequestBody MenuItemIngredientsRequest request, Principal principal) {
-        if (principal == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        List<MenuItemDTO> menuItems = menuItemService.findByIngredients(request, user);
+    @GetMapping("/filter")
+    public ResponseEntity<List<MenuItemDTO>> findAll(@RequestParam(required = false) String size,
+                                                     @RequestParam(required = false) String category,
+                                                     @RequestParam(required = false) List<String> ingredients,
+                                                     @RequestParam(required = false) BigDecimal minPrice,
+                                                     @RequestParam(required = false) BigDecimal maxPrice){
+        List<MenuItemDTO> menuItems = menuItemService.findAll(size,category,ingredients, minPrice, maxPrice);
         return ResponseEntity.ok(menuItems);
     }
+
+//    @PostMapping("/filter")
+//    public ResponseEntity<List<MenuItemDTO>> getMenuItemByFilter(@RequestBody MenuItemIngredientsRequest request, Principal principal) {
+//        if (principal == null) {
+//            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//        }
+//        User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+//        List<MenuItemDTO> menuItems = menuItemService.findByIngredients(request, user);
+//        return ResponseEntity.ok(menuItems);
+//    }
 
 
     @PostMapping

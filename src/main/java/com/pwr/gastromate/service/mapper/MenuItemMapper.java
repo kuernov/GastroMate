@@ -8,6 +8,7 @@ import com.pwr.gastromate.data.Category;
 import com.pwr.gastromate.data.User;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,18 +26,18 @@ public class MenuItemMapper {
                 .map(Category::getId)
                 .collect(Collectors.toSet()));
 
-        // Mapowanie składników
-        List<MenuItemIngredientDTO> ingredientDTOs = menuItem.getMenuItemIngredients().stream()
+        // Mapowanie składników z użyciem posortowanej listy
+        List<MenuItemIngredientDTO> ingredientDTOs = menuItem.getSortedMenuItemIngredients().stream()
                 .map(ingredient -> new MenuItemIngredientDTO(
                         ingredient.getIngredient().getId(),
                         ingredient.getMenuItem().getId(),
-                        ingredient.getIngredient().getName(),  // Pobieramy nazwę składnika
+                        ingredient.getIngredient().getName(),
                         ingredient.getQuantityRequired(),
                         ingredient.getUnit().getId()
                 ))
                 .collect(Collectors.toList());
-        dto.setIngredients(ingredientDTOs);
 
+        dto.setIngredients(ingredientDTOs);
         return dto;
     }
 

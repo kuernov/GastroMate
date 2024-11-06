@@ -9,9 +9,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -50,5 +52,11 @@ public class MenuItem {
     @OneToMany(mappedBy = "menuItem")
     @JsonManagedReference
     private List<OrderItem> orderItems;
-    // Constructors, getters, setters
+
+    public List<MenuItemIngredient> getSortedMenuItemIngredients() {
+        return menuItemIngredients.stream()
+                .sorted(Comparator.comparing(menuItemIngredient -> menuItemIngredient.getIngredient().getName()))
+                .collect(Collectors.toList());
+    }
+
 }

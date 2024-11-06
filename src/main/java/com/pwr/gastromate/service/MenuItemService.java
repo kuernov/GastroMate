@@ -6,10 +6,14 @@ import com.pwr.gastromate.dto.MenuItemIngredientDTO;
 import com.pwr.gastromate.dto.MenuItemIngredientsRequest;
 import com.pwr.gastromate.repository.*;
 import com.pwr.gastromate.service.mapper.MenuItemMapper;
+import com.pwr.gastromate.specification.MenuItemSpecification;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,13 +24,36 @@ public class MenuItemService {
     private final CategoryRepository categoryRepository;
     private final IngredientRepository ingredientRepository;
     private final UnitRepository unitRepository;
+    private final MenuItemMapper menuItemMapper;
 
-    public List<MenuItem> findAll() {
-        return menuItemRepository.findAll();
+    public List<MenuItemDTO> findAll(String size, String category, List<String> ingredients, BigDecimal minPrice, BigDecimal maxPrice) {
+        Specification<MenuItem> spec = Specification.where(null);
+
+        if (size != null && !size.isEmpty()) {
+            spec = spec.and(MenuItemSpecification.hasSizeInName("(" + size + ")"));
+        }
+
+        if (category != null && !category.isEmpty()) {
+            spec = spec.and(MenuItemSpecification.hasCategoryName(category));
+        }
+
+        if (ingredients != null && !ingredients.isEmpty()) {
+            spec = spec.and(MenuItemSpecification.hasIngredients(ingredients));
+        }
+
+        if (minPrice != null || maxPrice != null) {
+            spec = spec.and(MenuItemSpecification.hasPriceBetween(minPrice, maxPrice));
+        }
+
+        Sort sort = Sort.by(Sort.Direction.ASC, "name");
+
+        return menuItemRepository.findAll(spec, sort).stream()
+                .map(MenuItemMapper::toDTO) // Mapowanie do DTO
+                .toList();
     }
 
     public List<MenuItemDTO> findAllByUserId(Integer userId) {
-        List<MenuItem> menuItems = menuItemRepository.findByUserId(userId);
+        List<MenuItem> menuItems = menuItemRepository.findByUserIdSorted(userId);
         return menuItems.stream()
                 .map(MenuItemMapper::toDTO)  // Mapuj każdą encję na DTO
                 .collect(Collectors.toList());
@@ -39,13 +66,6 @@ public class MenuItemService {
         return MenuItemMapper.toDTO(menuItem);
     }
 
-    public List<MenuItemDTO> findByIngredients(MenuItemIngredientsRequest request, User user) {
-        List<MenuItem> menuItems = menuItemRepository.findByMenuItemIngredients(request.getIngredientIds(), user.getId());
-        return menuItems.stream()
-                .map(MenuItemMapper::toDTO)
-                .collect(Collectors.toList());
-
-    }
 
     public MenuItemDTO save(MenuItemDTO menuItemDTO, List<MenuItemIngredientDTO> menuItemIngredientDTOS, User user) {
         Set<Category> categories = new HashSet<>(categoryRepository.findAllById(menuItemDTO.getCategoryIds()));
