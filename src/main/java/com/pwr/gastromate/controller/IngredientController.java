@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/ingredients")
@@ -35,12 +36,13 @@ public class IngredientController {
     }
 
     @GetMapping("/grouped")
-    public ResponseEntity<List<GroupedIngredientDTO>> getGroupedIngredients(Principal principal) {
+    public ResponseEntity<List<GroupedIngredientDTO>> getGroupedIngredients(Principal principal,
+                                                                            @RequestParam(required = false) String name) {
         if (principal == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return ResponseEntity.ok(ingredientService.getGroupedIngredients(user.getId()));
+        return ResponseEntity.ok(ingredientService.getGroupedIngredients(user.getId(), name));
     }
 
     // Dodawanie składnika dla użytkownika

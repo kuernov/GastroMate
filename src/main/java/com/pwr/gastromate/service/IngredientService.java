@@ -10,9 +10,12 @@ import com.pwr.gastromate.repository.IngredientRepository;
 import com.pwr.gastromate.repository.UnitRepository;
 import com.pwr.gastromate.repository.UserRepository;
 import com.pwr.gastromate.service.mapper.IngredientMapper;
+import com.pwr.gastromate.specification.IngredientSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,8 +39,13 @@ public class IngredientService {
                 .collect(Collectors.toList());
     }
 
-    public List<GroupedIngredientDTO> getGroupedIngredients(Integer userId) {
-        List<Ingredient> ingredients = ingredientRepository.findByUserId(userId);
+    public List<GroupedIngredientDTO> getGroupedIngredients(Integer userId, String name) {
+        // Combine specifications for user ID, name filtering, and ordering
+        Specification<Ingredient> spec = Specification.where(IngredientSpecification.belongsToUser(userId))
+                .and(IngredientSpecification.hasNameContaining(name))
+                .and(IngredientSpecification.orderByNameAndExpiryDate());
+
+        List<Ingredient> ingredients = ingredientRepository.findAll(spec);
 
         Map<String, List<Ingredient>> groupedByProductName = ingredients.stream()
                 .collect(Collectors.groupingBy(Ingredient::getName));
@@ -51,8 +59,6 @@ public class IngredientService {
                             .mapToDouble(Ingredient::getQuantity)
                             .sum();
 
-
-                    // Create a DTO with total quantity and individual details
                     return new GroupedIngredientDTO(
                             productName,
                             totalQuantity,
@@ -67,6 +73,7 @@ public class IngredientService {
                                     .collect(Collectors.toList())
                     );
                 })
+                .sorted(Comparator.comparing(GroupedIngredientDTO::getName)) // Sort by product name in the final DTO list
                 .collect(Collectors.toList());
     }
 
