@@ -12,15 +12,19 @@ import com.pwr.gastromate.repository.OrderItemRepository;
 import com.pwr.gastromate.repository.OrderRepository;
 import com.pwr.gastromate.service.mapper.OrderItemMapper;
 import com.pwr.gastromate.service.mapper.OrderMapper;
+import com.pwr.gastromate.specification.OrderSpecification;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,15 +76,25 @@ public class OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
     }
 
-    public Page<OrderDTO> getAllOrdersForUser(User user, int page, int size) {
+    public Page<OrderDTO> getAllOrdersForUser(User user, int page, int size, LocalDate startDate, LocalDate endDate) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Order> ordersPage = orderRepository.findByUser(user, pageable);
 
-        List<OrderDTO> orderDTOs = ordersPage.stream()
-                .map(orderMapper::toDTO)
-                .collect(Collectors.toList());
+        // Create a specification with optional filters
+        Specification<Order> spec = Specification.where(OrderSpecification.belongsToUser(user));
 
-        return new PageImpl<>(orderDTOs, pageable, ordersPage.getTotalElements());
+        if (startDate != null) {
+            LocalDateTime startDateTime = startDate.atStartOfDay(); // Start of day
+            spec = spec.and(OrderSpecification.hasOrderDateAfter(startDateTime));
+        }
+
+        if (endDate != null) {
+            LocalDateTime endDateTime = endDate.atTime(23, 59, 59); // End of day
+            spec = spec.and(OrderSpecification.hasOrderDateBefore(endDateTime));
+        }
+
+        Page<Order> ordersPage = orderRepository.findAll(spec, pageable);
+
+        return ordersPage.map(orderMapper::toDTO);
     }
 
     public Page<Order> getOrders(int page, int size) {

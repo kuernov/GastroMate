@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -16,7 +17,7 @@ import java.util.List;
 public class OrderDTO {
     private Integer id;
     private List<OrderItemDTO> orderItems;
-    private Timestamp orderDate;
+    private LocalDateTime orderDate;
     private BigDecimal totalPrice; // pole na całkowitą cenę
     // Gettery i settery
 }

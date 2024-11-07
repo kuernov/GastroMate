@@ -57,7 +57,7 @@ public class LoadOrdersService {
                 LocalDateTime combinedDateTime = LocalDateTime.of(orderDate, orderTimeOnly);
 
                 // Konwersja na Timestamp
-                Timestamp orderTimestamp = Timestamp.valueOf(combinedDateTime);
+                LocalDateTime orderTimestamp = Timestamp.valueOf(combinedDateTime).toLocalDateTime();
 
                 // Tworzenie lub znalezienie użytkownika
                 User user = userRepository.findById(1)
