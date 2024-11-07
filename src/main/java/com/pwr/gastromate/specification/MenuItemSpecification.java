@@ -39,4 +39,9 @@ public class MenuItemSpecification {
                return criteriaBuilder.conjunction();
           };
      }
+
+     public static Specification<MenuItem> hasName(String name) {
+          return (root, query, criteriaBuilder) ->
+                  criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%");
+     }
 }

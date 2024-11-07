@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Tag, message } from 'antd';
+import { Table, message } from 'antd';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
 const OrdersPage = () => {
     const [orders, setOrders] = useState([]);
-    const [menuItems, setMenuItems] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [currentPage, setCurrentPage] = useState(0); // Dodano stan do przechowywania bieżącej strony
-    const [totalPages, setTotalPages] = useState(0); // Dodano stan do przechowywania liczby stron
+    const [currentPage, setCurrentPage] = useState(0); // Track the current page
+    const [totalPages, setTotalPages] = useState(0); // Track the total number of pages
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -21,19 +20,12 @@ const OrdersPage = () => {
                     return;
                 }
 
-                const [ordersResponse, menuItemResponse] = await Promise.all([
-                    axios.get(`http://localhost:8080/orders?page=${page}&size=10`, {
-                        headers: { Authorization: `Bearer ${token}` },
-                    }),
-                    axios.get("http://localhost:8080/menu", {
-                        headers: { Authorization: `Bearer ${token}` },
-                    })
-                ]);
+                const ordersResponse = await axios.get(`http://localhost:8080/orders?page=${page}&size=10`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
 
-                console.log("Orders Response:", ordersResponse.data); // Dodaj logowanie odpowiedzi
-                console.log("Menu Items Response:", menuItemResponse.data);
+                console.log("Orders Response:", ordersResponse.data);
 
-                setMenuItems(menuItemResponse.data);
                 setOrders(ordersResponse.data.content);
                 setTotalPages(ordersResponse.data.totalPages);
                 setLoading(false);
@@ -47,10 +39,8 @@ const OrdersPage = () => {
     }, [navigate, currentPage]);
 
     const handleTableChange = (pagination) => {
-        setCurrentPage(pagination.current - 1); // Ant Design używa numeracji stron od 1, dlatego odejmujemy 1
+        setCurrentPage(pagination.current - 1); // Adjust for 1-based pagination
     };
-
-
 
     const columns = [
         {
@@ -74,20 +64,15 @@ const OrdersPage = () => {
             render: (items) => {
                 return (
                     <ul>
-                        {items.map((item, index) => {
-                            const menuItemId = item.menuItemId;
-                            const menuItem = menuItems.find(menuItem => menuItem.id === menuItemId);
-                            return (
-                                <li key={index}>
-                                    {menuItem ? `${menuItem.name} (x${item.quantity}) - ${(item.priceAtOrder*item.quantity).toFixed(2)} zł` : `Item not found (x${item.quantity})`}
-                                </li>
-                            );
-                        })}
+                        {items.map((item, index) => (
+                            <li key={index}>
+                                {`${item.menuItemName} (x${item.quantity}) - ${(item.priceAtOrder * item.quantity).toFixed(2)} zł`}
+                            </li>
+                        ))}
                     </ul>
                 );
             },
         },
-
         {
             title: 'Total Price',
             dataIndex: 'totalPrice',
@@ -105,9 +90,9 @@ const OrdersPage = () => {
                 rowKey="id"
                 loading={loading}
                 pagination={{
-                    current: currentPage + 1, // Konwertujemy do numeracji od 1
+                    current: currentPage + 1,
                     pageSize: 10,
-                    total: totalPages * 10, // Liczba stron razy liczba elementów na stronę
+                    total: totalPages * 10,
                 }}
                 onChange={handleTableChange}
             />

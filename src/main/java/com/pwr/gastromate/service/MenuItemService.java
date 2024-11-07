@@ -28,9 +28,12 @@ public class MenuItemService {
     private final UnitRepository unitRepository;
     private final MenuItemMapper menuItemMapper;
 
-    public Page<MenuItemDTO> findAll(String size, String category, List<String> ingredients, BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
+    public Page<MenuItemDTO> findAll(String name, String size, String category, List<String> ingredients, BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
         Specification<MenuItem> spec = Specification.where(null);
+        if (name!=null && !name.isEmpty()){
+            spec = spec.and(MenuItemSpecification.hasName(name));
 
+        }
         if (size != null && !size.isEmpty()) {
             spec = spec.and(MenuItemSpecification.hasSizeInName("(" + size + ")"));
         }

@@ -14,6 +14,7 @@ public class OrderItemMapper {
     public static OrderItemDTO toDto(OrderItem orderItem) {
         return new OrderItemDTO(
                 orderItem.getMenuItem().getId(),
+                orderItem.getMenuItem().getName(),
                 orderItem.getOrder().getId(),
                 orderItem.getQuantity(),
                 orderItem.getPriceAtOrder()

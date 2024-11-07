@@ -3,7 +3,7 @@ import { Form, Input, InputNumber, Button, Select, message, Card, Space } from "
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { PlusOutlined } from "@ant-design/icons";
-import CategoryForm from "./CategoryForm";
+import CategoryForm from "../CategoryForm";
 
 const MenuItemsForm = ({ ingredients, units, categories, setCategories, menuItems, setMenuItems }) => {
     const [form] = Form.useForm();

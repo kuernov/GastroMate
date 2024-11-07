@@ -43,6 +43,7 @@ public class OrderMapper {
 
         OrderItemDTO orderItemDTO = new OrderItemDTO();
         orderItemDTO.setMenuItemId(orderItem.getMenuItem().getId());
+        orderItemDTO.setMenuItemName(orderItem.getMenuItem().getName());
         orderItemDTO.setOrderId(orderItem.getOrder().getId());
         orderItemDTO.setQuantity(orderItem.getQuantity());
         orderItemDTO.setPriceAtOrder(orderItem.getPriceAtOrder());

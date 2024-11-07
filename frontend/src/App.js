@@ -9,7 +9,7 @@ import IngredientsPage from "./components/IngredientsPage";
 
 
 import "antd/dist/reset.css";
-import MenuItemsPage from "./components/MenuItemsPage";
+import MenuItemsPage from "./components/MenuPage/MenuItemsPage";
 import OrdersPage from "./components/OrdersPage";
 
 const { Header, Content, Footer } = Layout;

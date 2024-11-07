@@ -42,7 +42,8 @@ public class MenuItemController {
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<Page<MenuItemDTO>> findAll(@RequestParam(required = false) String size,
+    public ResponseEntity<Page<MenuItemDTO>> findAll(@RequestParam(required = false) String name,
+                                                     @RequestParam(required = false) String size,
                                                      @RequestParam(required = false) String category,
                                                      @RequestParam(required = false) List<String> ingredients,
                                                      @RequestParam(required = false) BigDecimal minPrice,
@@ -51,7 +52,7 @@ public class MenuItemController {
                                                      @RequestParam(defaultValue = "10") int pageSize) {
         Sort sort = Sort.by("name").ascending();
         Pageable pageable = PageRequest.of(page, pageSize, sort);
-        Page<MenuItemDTO> menuItems = menuItemService.findAll(size, category, ingredients, minPrice, maxPrice, pageable);
+        Page<MenuItemDTO> menuItems = menuItemService.findAll(name, size, category, ingredients, minPrice, maxPrice, pageable);
         return ResponseEntity.ok(menuItems);
     }
 
