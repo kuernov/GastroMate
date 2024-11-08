@@ -5,6 +5,7 @@ import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
 import DashboardPage from "./components/DashboardPage";
 import IngredientsPage from "./components/IngredientsPage";
+import SalesReportPage from "./components/ReportPage/SalesReportPage";
 
 
 
@@ -51,6 +52,9 @@ const App = () => {
                                 <Menu.Item key="orders">
                                     <a href="/orders">Orders</a>
                                 </Menu.Item>
+                                <Menu.Item key="reports">
+                                    <a href="/reports">Sales Reports</a>
+                                </Menu.Item>
                                 <Menu.Item key="logout">
                                     <Button type="primary" onClick={handleLogout}>
                                         Logout
@@ -69,6 +73,7 @@ const App = () => {
                         <Route path="/ingredients" element={<IngredientsPage /> } />
                         <Route path="/menu" element={<MenuItemsPage /> } />
                         <Route path="/orders" element={<OrdersPage /> } />
+                        <Route path="/reports" element={<SalesReportPage /> } />
                         <Route path="*" element={<Navigate to="/login" />} />
                     </Routes>
                 </Content>
