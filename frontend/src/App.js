@@ -4,7 +4,7 @@ import { Button, Layout, Menu } from "antd";
 import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
 import DashboardPage from "./components/DashboardPage";
-import IngredientsPage from "./components/IngredientsPage";
+import IngredientsPage from "./components/IngredientsPage/IngredientsPage";
 import SalesReportPage from "./components/ReportPage/SalesReportPage";
 
 

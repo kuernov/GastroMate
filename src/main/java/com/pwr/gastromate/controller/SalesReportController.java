@@ -2,6 +2,8 @@ package com.pwr.gastromate.controller;
 
 import com.pwr.gastromate.data.User;
 import com.pwr.gastromate.dto.CategoryRevenueDTO;
+import com.pwr.gastromate.dto.SalesByDayOfWeekDTO;
+import com.pwr.gastromate.dto.SalesByHourDTO;
 import com.pwr.gastromate.dto.TopSellingItemDTO;
 import com.pwr.gastromate.exception.UnauthorizedException;
 import com.pwr.gastromate.service.SalesReportService;
@@ -90,5 +92,27 @@ public class SalesReportController {
         Integer userId = user.getId();
         BigDecimal averageOrderValue = salesReportService.calculateAverageOrderValue(startDate, endDate, userId);
         return ResponseEntity.ok(averageOrderValue);
+    }
+
+    @GetMapping("/sales-by-day-of-week")
+    public ResponseEntity<List<SalesByDayOfWeekDTO>> getSalesByDayOfWeek(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            Principal principal) {
+        User user = findUser(principal);
+        Integer userId = user.getId();
+        List<SalesByDayOfWeekDTO> sales = salesReportService.getSalesByDayOfWeek(startDate, endDate, userId);
+        return ResponseEntity.ok(sales);
+    }
+
+    @GetMapping("/sales-by-hour")
+    public ResponseEntity<List<SalesByHourDTO>> getSalesByHour(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            Principal principal) {
+        User user = findUser(principal);
+        Integer userId = user.getId();
+        List<SalesByHourDTO> sales = salesReportService.getSalesByHour(startDate, endDate, userId);
+        return ResponseEntity.ok(sales);
     }
 }

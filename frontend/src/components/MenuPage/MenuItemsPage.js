@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Card, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import "../styles/MenuItemsPage.css";
-import MenuItemsTable from "../MenuItemsTable";
+import MenuItemsTable from "./MenuItemsTable";
 import MenuItemsFilter from "./MenuItemsFilter";
 import MenuItemsPagination from "./MenuItemsPagination";
 import MenuItemsForm from "./MenuItemsForm";

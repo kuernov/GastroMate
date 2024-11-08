@@ -13,6 +13,8 @@ public class TopSellingItemDTO {
     private String itemName;
     private Long quantitySold;
     private BigDecimal totalRevenue;
+    private double quantityPercentage; // Nowe pole na procentowy udział ilości
+    private double revenuePercentage;
 
     public TopSellingItemDTO(String name, Long quantitySold, Long totalRevenue){
         this.itemName = name;

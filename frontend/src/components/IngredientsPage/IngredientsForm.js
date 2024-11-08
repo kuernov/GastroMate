@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Form, Input, InputNumber, Button, Select, message, Card } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import UnitForm from "./UnitForm"; // Import nowego komponentu
+import UnitForm from "../UnitForm"; // Import nowego komponentu
 
 const IngredientsForm = ({ units, setIngredients, ingredients, setUnits }) => {
     const [form] = Form.useForm();

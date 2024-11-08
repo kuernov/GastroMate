@@ -1,5 +1,5 @@
 import { Button, Form, Input, Popconfirm, Table } from "antd";
-import './styles/MenuItemsTable.css';
+import '../styles/MenuItemsTable.css';
 import React, {useState} from "react";
 
 const MenuItemsTable = ({ menuItems, categories, loading, units, onDelete }) => {

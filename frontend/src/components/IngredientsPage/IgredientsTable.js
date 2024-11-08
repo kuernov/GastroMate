@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Table, Button, Popconfirm, Form, Input } from "antd";
-import './styles/IngredientsTable.css'; // Add your custom CSS file
+import '../styles/IngredientsTable.css'; // Add your custom CSS file
 
 const IngredientsTable = ({ ingredients, units, loading, onEditQuantity, onDelete }) => {
     const [editingId, setEditingId] = useState(null);
