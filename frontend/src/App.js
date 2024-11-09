@@ -1,79 +1,85 @@
-import React, {useState} from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate, Link } from "react-router-dom";
 import { Button, Layout, Menu } from "antd";
 import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
 import DashboardPage from "./components/DashboardPage";
 import IngredientsPage from "./components/IngredientsPage/IngredientsPage";
 import SalesReportPage from "./components/ReportPage/SalesReportPage";
-
-
-
-import "antd/dist/reset.css";
 import MenuItemsPage from "./components/MenuPage/MenuItemsPage";
 import OrdersPage from "./components/OrdersPage";
+import "antd/dist/reset.css";
+import "./App.css"; // Dodaj niestandardowe style
 
 const { Header, Content, Footer } = Layout;
 
 const App = () => {
-    // Stan logowania
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("accessToken"));
 
-    // Funkcja do obsługi wylogowania
     const handleLogout = () => {
         localStorage.removeItem("accessToken");
-        setIsLoggedIn(false);  // Ustawiamy stan na false
-        window.location.href = "/login"    };
+        setIsLoggedIn(false);
+        window.location.href = "/login";
+    };
+
     return (
         <Router>
             <Layout className="layout">
-                <Header>
-                    <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["1"]}>
-                        {!isLoggedIn ? (
-                            <>
-                                <Menu.Item key="login">
-                                    <a href="/login">Login</a>
-                                </Menu.Item>
-                                <Menu.Item key="register">
-                                    <a href="/register">Register</a>
-                                </Menu.Item>
-                            </>
-                        ) : (
-                            <>
-                                <Menu.Item key="dashboard">
-                                    <a href="/dashboard">Dashboard</a>
-                                </Menu.Item>
-                                <Menu.Item key="ingredients">
-                                    <a href="/ingredients">Ingredients</a>
-                                </Menu.Item>
-                                <Menu.Item key="menu">
-                                    <a href="/menu">Menu</a>
-                                </Menu.Item>
-                                <Menu.Item key="orders">
-                                    <a href="/orders">Orders</a>
-                                </Menu.Item>
-                                <Menu.Item key="reports">
-                                    <a href="/reports">Sales Reports</a>
-                                </Menu.Item>
-                                <Menu.Item key="logout">
-                                    <Button type="primary" onClick={handleLogout}>
-                                        Logout
-                                    </Button>
-                                </Menu.Item>
-                            </>
+                <Header className="header">
+                    <div className="header-container">
+                        <div className="logo">GastroMate</div>
+                        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["1"]} className="menu">
+                            {!isLoggedIn ? (
+                                <>
+                                    <Menu.Item key="login">
+                                        <Link to="/login">Login</Link>
+                                    </Menu.Item>
+                                    <Menu.Item key="register">
+                                        <Link to="/register">Register</Link>
+                                    </Menu.Item>
+                                </>
+                            ) : (
+                                <>
+                                    <Menu.Item key="dashboard">
+                                        <Link to="/dashboard">Dashboard</Link>
+                                    </Menu.Item>
+                                    <Menu.Item key="ingredients">
+                                        <Link to="/ingredients">Ingredients</Link>
+                                    </Menu.Item>
+                                    <Menu.Item key="menu">
+                                        <Link to="/menu">Menu</Link>
+                                    </Menu.Item>
+                                    <Menu.Item key="orders">
+                                        <Link to="/orders">Orders</Link>
+                                    </Menu.Item>
+                                    <Menu.Item key="reports">
+                                        <Link to="/reports">Sales Reports</Link>
+                                    </Menu.Item>
+                                </>
+                            )}
+                        </Menu>
+                        {isLoggedIn && (
+                            <Button
+                                type="primary"
+                                danger
+                                onClick={handleLogout}
+                                className="logout-button"
+                            >
+                                Logout
+                            </Button>
                         )}
-                    </Menu>
+                    </div>
                 </Header>
 
                 <Content style={{ padding: "50px 50px" }}>
                     <Routes>
                         <Route path="/login" element={<LoginPage setIsLoggedIn={setIsLoggedIn} />} />
                         <Route path="/register" element={<RegisterPage />} />
-                        <Route path="/dashboard" element={<DashboardPage /> } />
-                        <Route path="/ingredients" element={<IngredientsPage /> } />
-                        <Route path="/menu" element={<MenuItemsPage /> } />
-                        <Route path="/orders" element={<OrdersPage /> } />
-                        <Route path="/reports" element={<SalesReportPage /> } />
+                        <Route path="/dashboard" element={<DashboardPage />} />
+                        <Route path="/ingredients" element={<IngredientsPage />} />
+                        <Route path="/menu" element={<MenuItemsPage />} />
+                        <Route path="/orders" element={<OrdersPage />} />
+                        <Route path="/reports" element={<SalesReportPage />} />
                         <Route path="*" element={<Navigate to="/login" />} />
                     </Routes>
                 </Content>
