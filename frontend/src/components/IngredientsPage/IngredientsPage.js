@@ -3,7 +3,7 @@ import axios from "axios";
 import {Button, Card, Input, message} from "antd";
 import { useNavigate } from "react-router-dom";
 import IngredientsForm from "./IngredientsForm";
-import IngredientsTable from "./IgredientsTable"
+import IngredientsTable from "./IngredientsTable";
 
 
 const IngredientsPage = () => {

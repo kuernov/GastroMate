@@ -7,6 +7,7 @@ import com.pwr.gastromate.dto.GroupedIngredientDTO;
 import com.pwr.gastromate.dto.IngredientDTO;
 import com.pwr.gastromate.exception.ResourceNotFoundException;
 import com.pwr.gastromate.repository.IngredientRepository;
+import com.pwr.gastromate.repository.InventoryLogRepository;
 import com.pwr.gastromate.repository.UnitRepository;
 import com.pwr.gastromate.repository.UserRepository;
 import com.pwr.gastromate.service.mapper.IngredientMapper;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,9 @@ public class IngredientService {
 
     @Autowired
     private IngredientMapper ingredientMapper;
+
+    @Autowired
+    private InventoryLogRepository inventoryLogRepository;
 
     public List<IngredientDTO> getIngredientsByUserId(Integer userId) {
         List<Ingredient> ingredients = ingredientRepository.findByUserId(userId);
@@ -84,7 +89,8 @@ public class IngredientService {
         Ingredient ingredient = ingredientMapper.toEntity(ingredientDTO, unit);
         ingredient.setUser(user);
         Ingredient savedIngredient = ingredientRepository.save(ingredient);
-
+        inventoryLogRepository.insertInventoryLog(savedIngredient.getId(),unit.getId(),
+                "ADD", BigDecimal.valueOf(savedIngredient.getQuantity()), user.getId());
         return ingredientMapper.toDTO(savedIngredient);
     }
 
@@ -99,17 +105,44 @@ public class IngredientService {
     public void deleteIngredient(Integer id){
         Ingredient ingredient = ingredientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Ingredient not found for this id: " + id));
+        inventoryLogRepository.insertInventoryLog(ingredient.getId(),ingredient.getUnit().getId(),
+                "SUBTRACT", BigDecimal.valueOf(ingredient.getQuantity()), ingredient.getUser().getId());
+
         ingredientRepository.delete(ingredient);
     }
 
     // Nowa metoda do aktualizacji ilości składnika
-    public IngredientDTO updateIngredientQuantity(Integer ingredientId, Float newQuantity) {
-        // Znajdź składnik po jego ID
+    public IngredientDTO updateIngredientQuantity(Integer ingredientId, Float quantityChange, String changeType) {
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
                 .orElseThrow(() -> new ResourceNotFoundException("Ingredient not found for this id: " + ingredientId));
+        Float newQuantity = getNewQuantity(quantityChange, changeType, ingredient);
         ingredient.setQuantity(newQuantity);
         Ingredient updatedIngredient = ingredientRepository.save(ingredient);
+        inventoryLogRepository.insertInventoryLog(updatedIngredient.getId(),updatedIngredient.getUnit().getId(),
+                changeType.toUpperCase(), BigDecimal.valueOf(quantityChange), updatedIngredient.getUser().getId());
         return ingredientMapper.toDTO(updatedIngredient);
+    }
+
+    private static Float getNewQuantity(Float quantityChange, String changeType, Ingredient ingredient) {
+        Float newQuantity = ingredient.getQuantity();
+        switch (changeType.toLowerCase()) {
+            case "add":
+                newQuantity += quantityChange;
+                break;
+            case "subtract":
+                newQuantity -= quantityChange;
+                if (newQuantity < 0) {
+                    newQuantity = 0f;
+                }
+                break;
+            case "adjust":
+                newQuantity = quantityChange;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid change type");
+        }
+
+        return newQuantity;
     }
 
 }

@@ -18,10 +18,18 @@ import java.util.stream.Collectors;
 public class InventoryLogService {
     private final InventoryLogRepository inventoryLogRepository;
     private final InventoryLogMapper inventoryLogMapper;
-    public List<InventoryLogDTO> save(User user, List<InventoryLogDTO> inventoryLogDTOS) {
-        List<InventoryLog> inventoryLogIngredients = inventoryLogMapper.toEntityList(inventoryLogDTOS, user);
-        List<InventoryLog> savedLogs = inventoryLogRepository.saveAll(inventoryLogIngredients);
-        return inventoryLogMapper.toDtoList(savedLogs);
+    public InventoryLogDTO save(User user, InventoryLogDTO inventoryLogDTO) {
+        InventoryLog inventoryLogIngredient = inventoryLogMapper.toEntity(inventoryLogDTO, user);
+        System.out.println("Saving InventoryLog with changeType: " + inventoryLogIngredient.getChangeType());
+        inventoryLogRepository.insertInventoryLog(
+                inventoryLogIngredient.getIngredient().getId(),
+                inventoryLogIngredient.getUnit().getId(),
+                inventoryLogIngredient.getChangeType().toString(),
+                inventoryLogIngredient.getQuantityChange(),
+                user.getId()
+        );
+        return inventoryLogMapper.toDTO(inventoryLogIngredient);
+
     }
 
     public List<InventoryLogDTO> findAll(User user){

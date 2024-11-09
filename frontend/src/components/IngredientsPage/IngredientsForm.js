@@ -1,17 +1,19 @@
 import React, { useState } from "react";
-import { Form, Input, InputNumber, Button, Select, message, Card } from "antd";
+import {Form, InputNumber, Button, Select, AutoComplete, message, Card, Input} from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import UnitForm from "../UnitForm"; // Import nowego komponentu
+import UnitForm from "../UnitForm";
 
 const IngredientsForm = ({ units, setIngredients, ingredients, setUnits }) => {
     const [form] = Form.useForm();
-    const [showNewUnitModal, setShowNewUnitModal] = useState(false); // State do wyświetlania modala
+    const [showNewUnitModal, setShowNewUnitModal] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [ingredientName, setIngredientName] = useState(""); // Trzyma wpisaną nazwę
     const navigate = useNavigate();
 
     const onFinish = async (values) => {
         try {
+            setLoading(true);
             const token = localStorage.getItem("accessToken");
 
             if (!token) {
@@ -20,10 +22,11 @@ const IngredientsForm = ({ units, setIngredients, ingredients, setUnits }) => {
                 return;
             }
 
+            // Wysyłanie danych składnika do backendu
             const response = await axios.post(
                 "http://localhost:8080/ingredients",
                 {
-                    name: values.name,
+                    name: ingredientName || values.name,
                     quantity: values.quantity,
                     unitId: values.unit,
                     expiryDate: values.expiryDate,
@@ -36,8 +39,11 @@ const IngredientsForm = ({ units, setIngredients, ingredients, setUnits }) => {
             setIngredients([...ingredients, response.data]);
             message.success("Ingredient added successfully!");
             form.resetFields();
+            setIngredientName(""); // Wyczyść niestandardową nazwę po dodaniu
         } catch (error) {
             message.error("Failed to add ingredient");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -49,7 +55,15 @@ const IngredientsForm = ({ units, setIngredients, ingredients, setUnits }) => {
                     label="Ingredient Name"
                     rules={[{ required: true, message: "Please enter the ingredient name" }]}
                 >
-                    <Input placeholder="Enter ingredient name" />
+                    <AutoComplete
+                        options={ingredients.map((ingredient) => ({ value: ingredient.name }))}
+                        placeholder="Select or enter an ingredient"
+                        onChange={(value) => setIngredientName(value)} // Aktualizacja niestandardowej nazwy
+                        value={ingredientName} // Ustawienie wartości AutoComplete na `ingredientName`
+                        filterOption={(inputValue, option) =>
+                            option.value.toLowerCase().includes(inputValue.toLowerCase())
+                        }
+                    />
                 </Form.Item>
 
                 <Form.Item
@@ -95,12 +109,10 @@ const IngredientsForm = ({ units, setIngredients, ingredients, setUnits }) => {
                 <Form.Item>
                     <Button type="primary" htmlType="submit" loading={loading}>
                         Add Ingredient
-
                     </Button>
                 </Form.Item>
             </Form>
 
-            {/* Modal for adding new unit */}
             <UnitForm
                 visible={showNewUnitModal}
                 setShowNewUnitModal={setShowNewUnitModal}

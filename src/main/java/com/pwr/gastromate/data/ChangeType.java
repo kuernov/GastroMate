@@ -5,5 +5,9 @@ public enum ChangeType {
     DEDUCTION,
     ADJUSTMENT,
     TRANSFER,
-    LOSS
+    LOSS,
+    ADD,
+    SUBTRACT,
+    ADJUST,
+
 }

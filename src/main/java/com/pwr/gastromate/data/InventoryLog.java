@@ -25,7 +25,7 @@ public class InventoryLog {
     private Ingredient ingredient;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "change_type", nullable = false)
     private ChangeType changeType;
 
     @Column(nullable = false)

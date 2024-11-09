@@ -40,10 +40,10 @@ public class InventoryLogController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<List<InventoryLogDTO>> saveInventoryLog(Principal principal, @RequestBody List<InventoryLogDTO> inventoryLogDTOS){
+    public ResponseEntity<InventoryLogDTO> saveInventoryLog(Principal principal, @RequestBody InventoryLogDTO inventoryLogDTO){
         User user = findUser(principal);
-        List<InventoryLogDTO> logs = inventoryLogService.save(user, inventoryLogDTOS);
-        return ResponseEntity.ok(logs);
+        InventoryLogDTO log = inventoryLogService.save(user, inventoryLogDTO);
+        return ResponseEntity.ok(log);
     }
 
 }

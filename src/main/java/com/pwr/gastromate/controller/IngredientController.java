@@ -69,8 +69,9 @@ public class IngredientController {
     @PutMapping("/{ingredientId}/quantity")
     public ResponseEntity<IngredientDTO> updateIngredientQuantity(
             @PathVariable Integer ingredientId,
-            @RequestParam Float newQuantity) {
-        IngredientDTO updatedIngredient = ingredientService.updateIngredientQuantity(ingredientId, newQuantity);
+            @RequestParam Float quantityChange,
+            @RequestParam String changeType) {
+        IngredientDTO updatedIngredient = ingredientService.updateIngredientQuantity(ingredientId, quantityChange, changeType);
         return ResponseEntity.ok(updatedIngredient);
     }
 
