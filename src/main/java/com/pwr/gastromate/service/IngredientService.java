@@ -78,7 +78,7 @@ public class IngredientService {
     }
 
     public IngredientDTO addIngredient(IngredientDTO ingredientDTO, User user) {
-        Unit unit = unitRepository.findByIdAndUserId(ingredientDTO.getUnitId(), user.getId())
+        Unit unit = unitRepository.findById(ingredientDTO.getUnitId())
                 .orElseThrow(()-> new ResourceNotFoundException("Unit not found"));
 
         Ingredient ingredient = ingredientMapper.toEntity(ingredientDTO, unit);
