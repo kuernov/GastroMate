@@ -9,7 +9,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
 
@@ -44,6 +44,9 @@ dependencies {
 	testRuntimeOnly('com.h2database:h2')
 	implementation 'org.apache.poi:poi:5.2.3'
 	implementation 'org.apache.poi:poi-ooxml:5.2.3'
+	implementation 'org.apache.commons:commons-math3:3.6.1'
+	implementation 'org.json:json:20231013'
+
 
 }
 

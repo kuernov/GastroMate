@@ -44,4 +44,9 @@ public class OrderController {
         return new ResponseEntity<>(userOrders, HttpStatus.OK);
     }
 
+    @GetMapping("/test-ingredient-usage")
+    public void testIngredientUsage(@RequestParam Integer ingredientId) {
+        orderService.testIngredientUsageQuery(ingredientId);
+    }
+
 }
