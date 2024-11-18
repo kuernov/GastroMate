@@ -139,28 +139,28 @@ public class ArimaPredictionService {
         // Convert data to JSON format
         String jsonData = new ObjectMapper().writeValueAsString(data);
         System.out.println("JSON data for SARIMA: " + jsonData);
-        Path tempFile = Files.createTempFile("sarima_input", ".json");
-        Files.write(tempFile, jsonData.getBytes(StandardCharsets.UTF_8));
-        String fileContent = Files.readString(tempFile);
-        System.out.println("File content written: " + fileContent);
         // Build command to execute the Python script
-        ProcessBuilder processBuilder = new ProcessBuilder(
-                "python", "src/main/resources/sarima_predict.py",
-                tempFile.toString(), String.valueOf(autoTune),
-                String.valueOf(seasonalPeriod), String.valueOf(steps)
-        );
+        // Budowanie polecenia do uruchomienia skryptu Python
+        List<String> command = new ArrayList<>();
+        command.add("python");
+        command.add("src/main/resources/sarima_predict.py");
+        command.add(jsonData);
+        command.add(String.valueOf(autoTune));
+        command.add(String.valueOf(seasonalPeriod));
+        command.add(String.valueOf(steps));
 
         // Add SARIMA parameters if auto-tuning is disabled
         if (!autoTune) {
-            processBuilder.command().add(String.valueOf(p));
-            processBuilder.command().add(String.valueOf(d));
-            processBuilder.command().add(String.valueOf(q));
-            processBuilder.command().add(String.valueOf(P));
-            processBuilder.command().add(String.valueOf(D));
-            processBuilder.command().add(String.valueOf(Q));
+            command.add(String.valueOf(p));
+            command.add(String.valueOf(d));
+            command.add(String.valueOf(q));
+            command.add(String.valueOf(P));
+            command.add(String.valueOf(D));
+            command.add(String.valueOf(Q));
         }
 
-// Start the process
+        // Uruchamianie procesu
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
         Process process = processBuilder.start();
 
 // Read the Python script output

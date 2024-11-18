@@ -44,5 +44,18 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
 
+#  sarima-predict:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile.sarima
+#    container_name: sarima-predict
+#    volumes:
+#      - ./sarima_predict.py:/app/sarima_predict.py
+#    command: [ "python", "/app/sarima_predict.py" ]
+#    depends_on:
+#      - backend
+#    environment:
+#      - PYTHONUNBUFFERED=1
+
 volumes:
   gastromate_data:
