@@ -62,11 +62,6 @@ public class PredictionController {
         }
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<List<DailyIngredientUsageDTO>> testEndpoint(Principal principal){
-        List<DailyIngredientUsageDTO> list = orderRepository.findDailyIngredientUsage(1);
-        return ResponseEntity.ok(list);
-    }
 
     @GetMapping("/weekly-average-usage")
     public ResponseEntity<List<WeeklyAverageUsageDTO>> getWeeklyAverage(){

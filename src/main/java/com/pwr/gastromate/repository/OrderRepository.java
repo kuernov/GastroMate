@@ -27,20 +27,21 @@ public interface OrderRepository extends JpaRepository<Order,Integer>, JpaSpecif
                                  @Param("endOfDay") LocalDateTime endOfDay,
                                  @Param("userId") Integer userId);
 
-    @Query("SELECT new com.pwr.gastromate.dto.DailyIngredientUsageDTO(" +
-            "CAST(DATE(o.orderDate) AS java.sql.Date), " +
-            "i.id, " +
-            "i.name, " +
-            "CAST(SUM(oi.quantity * mii.quantityRequired) AS java.math.BigDecimal)) " +
-            "FROM Order o " +
-            "JOIN o.orderItems oi " +
-            "JOIN oi.menuItem mi " +
-            "JOIN mi.menuItemIngredients mii " +
-            "JOIN mii.ingredient i " +
-            "WHERE i.id = :ingredientId " +
-            "GROUP BY DATE(o.orderDate), i.id, i.name " +
-            "ORDER BY DATE(o.orderDate), i.name")
-    List<DailyIngredientUsageDTO> findDailyIngredientUsage(@Param("ingredientId") Integer ingredientId);
+    @Query("""
+    SELECT CAST(DATE(o.orderDate) AS java.sql.Date) AS date,
+           COALESCE(CAST(SUM(oi.quantity * mii.quantityRequired) AS java.math.BigDecimal), 0) AS totalUsage
+    FROM Order o
+    JOIN o.orderItems oi
+    JOIN oi.menuItem mi
+    JOIN mi.menuItemIngredients mii
+    JOIN mii.ingredient i
+    WHERE i.id = :ingredientId
+    GROUP BY DATE(o.orderDate)
+    ORDER BY DATE(o.orderDate)
+""")
+    List<Object[]> findDailyIngredientUsage(@Param("ingredientId") Integer ingredientId);
+
+
 
     @Query(value = "SELECT EXTRACT(DOW FROM daily_usage.order_day) AS day_of_week, " +
             "AVG(daily_usage.total_quantity) AS average_usage " +

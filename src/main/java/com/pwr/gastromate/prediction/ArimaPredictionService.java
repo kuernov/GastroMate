@@ -10,14 +10,17 @@ import org.json.JSONArray;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -95,12 +98,44 @@ public class ArimaPredictionService {
 
     public List<PredictionResultDTO> predictDemand(Integer ingredientId, boolean autoTune, int seasonalPeriod, int steps,
                                                    Integer p, Integer d, Integer q, Integer P, Integer D, Integer Q) throws Exception {
-        List<DailyIngredientUsageDTO> usageData = orderRepository.findDailyIngredientUsage(ingredientId);
+        List<Object[]> usageData = orderRepository.findDailyIngredientUsage(ingredientId);
 
-        List<Double> data = usageData.stream()
-                .map(dto -> dto.getDailyConsumption().doubleValue())
-                .limit(Math.max(0, usageData.size() - 32))
+        // Mapowanie wyników zapytania na DTO
+        List<DailyIngredientUsageDTO> dailyUsage = usageData.stream()
+                .map(row -> new DailyIngredientUsageDTO(
+                        ((Date) row[0]).toLocalDate(), // Konwersja java.sql.Date do LocalDate
+                        ((BigDecimal) row[1])
+                ))
                 .toList();
+
+        // Uzupełnianie brakujących dni
+        Map<LocalDate, BigDecimal> usageMap = new TreeMap<>();
+        for (DailyIngredientUsageDTO dto : dailyUsage) {
+            usageMap.put(dto.getOrderDate(), dto.getDailyConsumption());
+        }
+
+        // Znajdowanie zakresu dat
+        if (!usageMap.isEmpty()) {
+            LocalDate startDate = usageMap.keySet().iterator().next();
+            LocalDate endDate = usageMap.keySet().stream().reduce((first, second) -> second).orElse(startDate);
+
+            // Wypełnianie brakujących dni
+            LocalDate current = startDate;
+            while (!current.isAfter(endDate)) {
+                usageMap.putIfAbsent(current, BigDecimal.ZERO);
+                current = current.plusDays(1);
+            }
+        }
+        System.out.println("Zużycie składników z datami:");
+        usageMap.forEach((date, value) -> System.out.println("Data: " + date + ", Zużycie: " + value));
+
+
+        // Przekształcanie danych na listę
+        List<Double> data = usageMap.values().stream()
+                .limit(Math.max(0, usageMap.size() - 31)) // Ograniczenie do ostatnich 32 dni
+                .map(BigDecimal::doubleValue)
+                .toList();
+
         // Convert data to JSON format
         String jsonData = new ObjectMapper().writeValueAsString(data);
         System.out.println("JSON data for SARIMA: " + jsonData);
@@ -150,7 +185,9 @@ public class ArimaPredictionService {
 
 
 // Determine the last date and format predictions with dates
-        LocalDate lastDate = usageData.isEmpty() ? LocalDate.now() : usageData.get(usageData.size() - 32).getOrderDate().toLocalDate();
+        LocalDate lastDate = dailyUsage.isEmpty()
+                ? LocalDate.now()
+                : dailyUsage.get(Math.max(0, dailyUsage.size() - 31)).getOrderDate();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 // Create a list of PredictionResultDTO with formatted dates and predictions
