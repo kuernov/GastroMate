@@ -1,7 +1,8 @@
-import sys
-import json
+from flask import Flask, request, jsonify
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 import pmdarima as pm
+
+app = Flask(__name__)
 
 def auto_tune_sarima(data, seasonal_period):
     stepwise_fit = pm.auto_arima(
@@ -21,33 +22,44 @@ def predict(data, p, d, q, P, D, Q, s, steps):
     forecast = fitted_model.forecast(steps=steps)
     return forecast.tolist()
 
-if __name__ == "__main__":
-    # Odczyt danych wejściowych jako JSON
-    data = json.loads(sys.argv[1])
+@app.route('/predict', methods=['POST'])
+def sarima_predict():
+    try:
+        # Odczyt danych wejściowych
+        input_data = request.get_json()
+        data = input_data.get("data", [])
+        auto_tune = input_data.get("auto_tune", True)
+        seasonal_period = input_data.get("seasonal_period", 7)
+        steps = input_data.get("steps", 7)
 
-    # Parametry wejściowe
-    auto_tune = sys.argv[2].lower() == 'true'
-    s = int(sys.argv[3])
-    steps = int(sys.argv[4])
+        # Walidacja danych wejściowych
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
 
-    # Dopasowanie modelu SARIMA
-    if auto_tune:
-        (p, d, q), (P, D, Q, _) = auto_tune_sarima(data, s)
-    else:
-        p = int(sys.argv[5])
-        d = int(sys.argv[6])
-        q = int(sys.argv[7])
-        P = int(sys.argv[8])
-        D = int(sys.argv[9])
-        Q = int(sys.argv[10])
+        # Dopasowanie modelu SARIMA
+        if auto_tune:
+            (p, d, q), (P, D, Q, _) = auto_tune_sarima(data, seasonal_period)
+        else:
+            p = input_data.get("p", 1)
+            d = input_data.get("d", 0)
+            q = input_data.get("q", 0)
+            P = input_data.get("P", 1)
+            D = input_data.get("D", 1)
+            Q = input_data.get("Q", 0)
 
-    # Prognoza
-    result = predict(data, p, d, q, P, D, Q, s, steps)
+        # Prognoza
+        forecast = predict(data, p, d, q, P, D, Q, seasonal_period, steps)
 
-    # Zwracanie wyników w formacie JSON
-    output = {
-        "forecast": result,
-        "selected_order": [p, d, q],
-        "selected_seasonal_order": [P, D, Q, s]
-    }
-    print(json.dumps(output))
+        # Zwracanie wyników
+        output = {
+            "forecast": forecast,
+            "selected_order": [p, d, q],
+            "selected_seasonal_order": [P, D, Q, seasonal_period]
+        }
+        return jsonify(output)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)

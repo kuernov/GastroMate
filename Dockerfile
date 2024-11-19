@@ -1,5 +1,5 @@
 # Użyj oficjalnej wersji JDK jako obrazu bazowego
-FROM openjdk:17-jdk-slim
+FROM openjdk:21-jdk-slim
 WORKDIR /app
 
 # Skopiuj plik JAR z katalogu `build/libs` (po zbudowaniu przez Gradle) do kontenera

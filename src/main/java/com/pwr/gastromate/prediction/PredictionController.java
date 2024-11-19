@@ -53,7 +53,7 @@ public class PredictionController {
 
 
         try {
-            List<PredictionResultDTO> predictions = arimaPredictionService.predictDemand(ingredientId, autoTune, seasonalPeriod, steps, p, d, q, P, D, Q);
+            List<PredictionResultDTO> predictions = arimaPredictionService.predictIngredientUsage(ingredientId, steps, autoTune);
             return ResponseEntity.ok(predictions);
         } catch (Exception e) {
             e.printStackTrace();
