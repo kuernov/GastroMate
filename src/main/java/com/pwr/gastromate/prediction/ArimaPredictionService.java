@@ -34,7 +34,7 @@ public class ArimaPredictionService {
     private final String sarimaApiUrl = "http://sarima-predict:5000/predict";
 
 
-    public List<PredictionResultDTO> predictIngredientUsage(Integer ingredientId, int steps, boolean autoTune) {
+    public List<PredictionResultDTO> predictIngredientUsage(Integer ingredientId, int steps, boolean autoTune, Integer p, Integer q, Integer d, Integer P, Integer Q, Integer D) {
         try {
             List<Object[]> usageData = orderRepository.findDailyIngredientUsage(ingredientId);
 
@@ -71,7 +71,13 @@ public class ArimaPredictionService {
                     "data", data,
                     "auto_tune", autoTune,
                     "seasonal_period", 7,
-                    "steps", steps
+                    "steps", steps,
+                    "p", p,
+                    "q", q,
+                    "d", d,
+                    "P", P,
+                    "Q", Q,
+                    "D", D
             );
 
             // Wysyłanie żądania do API

@@ -42,7 +42,6 @@ public class PredictionController {
     public ResponseEntity<List<PredictionResultDTO>> predictIngredientUsage(
             @RequestParam Integer ingredientId,
             @RequestParam boolean autoTune,
-            @RequestParam int seasonalPeriod,
             @RequestParam int steps,
             @RequestParam(required = false) Integer p,
             @RequestParam(required = false) Integer d,
@@ -53,7 +52,7 @@ public class PredictionController {
 
 
         try {
-            List<PredictionResultDTO> predictions = arimaPredictionService.predictIngredientUsage(ingredientId, steps, autoTune);
+            List<PredictionResultDTO> predictions = arimaPredictionService.predictIngredientUsage(ingredientId, steps, autoTune,p,d,q,P,D,Q);
             return ResponseEntity.ok(predictions);
         } catch (Exception e) {
             e.printStackTrace();
