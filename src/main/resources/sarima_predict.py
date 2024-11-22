@@ -40,12 +40,12 @@ def sarima_predict():
         if auto_tune:
             (p, d, q), (P, D, Q, _) = auto_tune_sarima(data, seasonal_period)
         else:
-            p = input_data.get("p", 1)
-            d = input_data.get("d", 0)
-            q = input_data.get("q", 0)
-            P = input_data.get("P", 1)
-            D = input_data.get("D", 1)
-            Q = input_data.get("Q", 0)
+            p = 5
+            d = 0
+            q = 0
+            P = 0
+            D = 1
+            Q = 1
 
         # Prognoza
         forecast = predict(data, p, d, q, P, D, Q, seasonal_period, steps)

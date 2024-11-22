@@ -1,9 +1,13 @@
 package com.pwr.gastromate.prediction;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pwr.gastromate.data.Ingredient;
 import com.pwr.gastromate.dto.DailyIngredientUsageDTO;
+import com.pwr.gastromate.dto.IngredientPredictionDTO;
 import com.pwr.gastromate.dto.PredictionResultDTO;
+import com.pwr.gastromate.repository.IngredientRepository;
 import com.pwr.gastromate.repository.OrderRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -26,13 +30,48 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class ArimaPredictionService {
 
-    @Autowired
     private OrderRepository orderRepository;
+    private IngredientRepository ingredientRepository;
     private final RestTemplate restTemplate = new RestTemplate();
     private final String sarimaApiUrl = "http://sarima-predict:5000/predict";
 
+    public List<IngredientPredictionDTO> generatePredictionsForIngredients(List<Integer> ingredientIds) {
+        List<IngredientPredictionDTO> results = new ArrayList<>();
+
+        for (Integer ingredientId : ingredientIds) {
+            Ingredient ingredient = ingredientRepository.findById(ingredientId)
+                    .orElseThrow(() -> new IllegalArgumentException("Ingredient not found with id: " + ingredientId));
+
+            List<PredictionResultDTO> ingredientPredictions = predictIngredientUsage(
+                    ingredientId,
+                    7,
+                    false,
+                    null, null, null, null, null, null
+            );
+
+            // Grupowanie dat i wartości
+            List<String> dates = new ArrayList<>();
+            List<Double> values = new ArrayList<>();
+            for (PredictionResultDTO prediction : ingredientPredictions) {
+                dates.add(prediction.getDate());
+                values.add(prediction.getPredictedValue());
+            }
+
+            // Tworzenie DTO dla składnika
+            IngredientPredictionDTO result = new IngredientPredictionDTO(
+                    ingredient.getName(),
+                    dates,
+                    values
+            );
+
+            results.add(result);
+        }
+
+        return results;
+    }
 
     public List<PredictionResultDTO> predictIngredientUsage(Integer ingredientId, int steps, boolean autoTune, Integer p, Integer q, Integer d, Integer P, Integer Q, Integer D) {
         try {
@@ -69,13 +108,7 @@ public class ArimaPredictionService {
                     "data", data,
                     "auto_tune", autoTune,
                     "seasonal_period", 7,
-                    "steps", steps,
-                    "p", p,
-                    "q", q,
-                    "d", d,
-                    "P", P,
-                    "Q", Q,
-                    "D", D
+                    "steps", steps
             );
 
             HttpHeaders headers = new HttpHeaders();

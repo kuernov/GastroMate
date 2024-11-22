@@ -34,12 +34,12 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.frontend
     container_name: react_frontend
     ports:
       - "3000:3000"
     volumes:
-      - ./src:/app/frontend/src  # Mountuje kod źródłowy do kontenera
+      - ./src/frontend:/app/frontend/src  # Mountuje kod źródłowy do kontenera
       - /app/node_modules  # Pomija node_modules (opcja opcjonalna)
     environment:
       - CHOKIDAR_USEPOLLING=true

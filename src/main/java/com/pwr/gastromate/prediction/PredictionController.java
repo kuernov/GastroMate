@@ -2,9 +2,7 @@ package com.pwr.gastromate.prediction;
 
 import com.pwr.gastromate.data.Order;
 import com.pwr.gastromate.data.User;
-import com.pwr.gastromate.dto.DailyIngredientUsageDTO;
-import com.pwr.gastromate.dto.PredictionResultDTO;
-import com.pwr.gastromate.dto.WeeklyAverageUsageDTO;
+import com.pwr.gastromate.dto.*;
 import com.pwr.gastromate.exception.UnauthorizedException;
 import com.pwr.gastromate.prediction.ArimaPredictionService;
 import com.pwr.gastromate.repository.OrderRepository;
@@ -12,9 +10,7 @@ import com.pwr.gastromate.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -58,6 +54,19 @@ public class PredictionController {
             e.printStackTrace();
             // Log the exception and return an appropriate response
             return ResponseEntity.status(500).body(List.of()); // Return 500 Internal Server Error with empty list
+        }
+    }
+
+    @PostMapping("/predict-selected-ingredients")
+    public ResponseEntity<List<IngredientPredictionDTO>> predictForSelectedIngredients(
+            @RequestBody IngredientRequest requestBody, Principal principal) {
+        try {
+            List<Integer> ingredientIds = requestBody.getIngredientIds(); // Pobranie listy z DTO
+            List<IngredientPredictionDTO> predictions = arimaPredictionService.generatePredictionsForIngredients(ingredientIds);
+            return ResponseEntity.ok(predictions);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(List.of());
         }
     }
 
