@@ -9,7 +9,8 @@ import SalesReportPage from "./components/ReportPage/SalesReportPage";
 import MenuItemsPage from "./components/MenuPage/MenuItemsPage";
 import OrdersPage from "./components/OrdersPage";
 import "antd/dist/reset.css";
-import "./App.css"; // Dodaj niestandardowe style
+import "./App.css";
+import RestockPage from "./components/RestockPage"; // Dodaj niestandardowe style
 
 const { Header, Content, Footer } = Layout;
 
@@ -55,6 +56,9 @@ const App = () => {
                                     <Menu.Item key="reports">
                                         <Link to="/reports">Sales Reports</Link>
                                     </Menu.Item>
+                                    <Menu.Item key="restock">
+                                        <Link to="/restock">Sales Reports</Link>
+                                    </Menu.Item>
                                 </>
                             )}
                         </Menu>
@@ -80,6 +84,7 @@ const App = () => {
                         <Route path="/menu" element={<MenuItemsPage />} />
                         <Route path="/orders" element={<OrdersPage />} />
                         <Route path="/reports" element={<SalesReportPage />} />
+                        <Route path="/restock" element={<RestockPage />} />
                         <Route path="*" element={<Navigate to="/login" />} />
                     </Routes>
                 </Content>

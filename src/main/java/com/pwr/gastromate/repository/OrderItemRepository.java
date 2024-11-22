@@ -62,4 +62,22 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, OrderItemI
                                          @Param("endDate") LocalDateTime endDate,
                                          @Param("userId") Integer userId);
 
+    @Query(value = """
+        SELECT i.id, 
+               COALESCE(SUM(oi.quantity * mi.quantity_required) / 4, 0) AS averageUsage
+        FROM ingredients i
+        LEFT JOIN menu_item_ingredients mi ON i.id = mi.ingredient_id
+        LEFT JOIN order_items oi ON mi.menu_item_id = oi.menu_item_id
+        LEFT JOIN orders o ON oi.order_id = o.id
+        WHERE i.user_id = :userId
+          AND o.order_date >= (
+              SELECT MAX(order_date) 
+              FROM orders 
+              WHERE user_id = :userId
+          ) - INTERVAL '4 weeks'
+        GROUP BY i.id, i.name
+        """, nativeQuery = true)
+    List<Object[]> findIngredientsAndAverageUsageByUserId(@Param("userId") Integer userId);
+
+
 }

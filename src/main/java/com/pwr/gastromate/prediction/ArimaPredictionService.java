@@ -45,13 +45,11 @@ public class ArimaPredictionService {
                     ))
                     .toList();
 
-            // Uzupełnianie brakujących dni
             Map<LocalDate, BigDecimal> usageMap = new TreeMap<>();
             for (DailyIngredientUsageDTO dto : dailyUsage) {
                 usageMap.put(dto.getOrderDate(), dto.getDailyConsumption());
             }
 
-            // Znajdowanie zakresu dat
             if (!usageMap.isEmpty()) {
                 LocalDate startDate = usageMap.keySet().iterator().next();
                 LocalDate endDate = usageMap.keySet().stream().reduce((first, second) -> second).orElse(startDate);
@@ -63,7 +61,7 @@ public class ArimaPredictionService {
                 }
             }
             List<Double> data = usageMap.values().stream()
-                    .limit(Math.max(0, usageMap.size() - 31)) // Ograniczenie do ostatnich 32 dni
+                    .limit(Math.max(0, usageMap.size() - 31))
                     .map(BigDecimal::doubleValue)
                     .toList();
 
@@ -80,20 +78,17 @@ public class ArimaPredictionService {
                     "D", D
             );
 
-            // Wysyłanie żądania do API
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
             ResponseEntity<String> response = restTemplate.exchange(sarimaApiUrl, HttpMethod.POST, request, String.class);
 
-            // Obsługa odpowiedzi z API
             if (response.getStatusCode() == HttpStatus.OK) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 Map<String, Object> responseMap = objectMapper.readValue(response.getBody(), Map.class);
                 List<Double> forecast = (List<Double>) responseMap.get("forecast");
 
-                // Tworzenie DTO na podstawie wyników prognozy
                 LocalDate lastDate = dailyUsage.isEmpty()
                         ? LocalDate.now()
                         : dailyUsage.get(dailyUsage.size() - 1).getOrderDate();
