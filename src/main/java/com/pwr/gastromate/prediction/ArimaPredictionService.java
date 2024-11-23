@@ -54,7 +54,6 @@ public class ArimaPredictionService {
                     null, null, null, null, null, null
             );
 
-            // Grupowanie dat i wartości
             List<String> dates = new ArrayList<>();
             List<Double> values = new ArrayList<>();
             for (PredictionResultDTO prediction : ingredientPredictions) {
@@ -65,7 +64,6 @@ public class ArimaPredictionService {
                     .map(value -> BigDecimal.valueOf(value).setScale(3, RoundingMode.HALF_UP))
                     .toList();
 
-            // Tworzenie DTO dla składnika
             IngredientPredictionDTO result = new IngredientPredictionDTO(
                     ingredient.getName(),
                     dates,

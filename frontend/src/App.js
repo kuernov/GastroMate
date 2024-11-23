@@ -57,7 +57,7 @@ const App = () => {
                                         <Link to="/reports">Sales Reports</Link>
                                     </Menu.Item>
                                     <Menu.Item key="restock">
-                                        <Link to="/restock">Sales Reports</Link>
+                                        <Link to="/restock">Restock</Link>
                                     </Menu.Item>
                                 </>
                             )}
