@@ -6,4 +6,61 @@ services:
       - 'POSTGRES_PASSWORD=postgres'
       - 'POSTGRES_USER=postgres'
     ports:
-      - '5432:5432'
+      - '5433:5432'
+    volumes:
+      - gastromate_data:/var/lib/postgresql/data  # Wolumin do przechowywania danych Postgresa
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spring_backend
+    depends_on:
+      - db
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/gastromate
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - "8080:8080"
+      - "5005:5005"  # Port do debugowania
+
+    volumes:
+      - ./src:/app/src              # Kod źródłowy
+      - ./build/libs:/app/build/libs  # Zbudowane pliki .jar
+
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    container_name: react_frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src/frontend:/app/frontend/src  # Mountuje kod źródłowy do kontenera
+      - /app/node_modules  # Pomija node_modules (opcja opcjonalna)
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
+  sarima-predict:
+    build:
+      context: .
+      dockerfile: Dockerfile.sarima
+    container_name: sarima-predict
+    volumes:
+      - ./src/main/resources/sarima_predict.py:/app/sarima_predict.py
+    command: [ "flask", "run", "--host=0.0.0.0", "--port=5000" ]
+    depends_on:
+      - backend
+    environment:
+      - PYTHONUNBUFFERED=1
+      - FLASK_APP=sarima_predict.py
+      - FLASK_RUN_HOST=0.0.0.0
+      - FLASK_RUN_PORT=5000
+    ports:
+      - "5000:5000"
+
+volumes:
+  gastromate_data:

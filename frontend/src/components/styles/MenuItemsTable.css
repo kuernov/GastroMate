@@ -1,0 +1,6 @@
+
+/* Styl dla podświetlonego wiersza */
+.expanded-row {
+    background-color: #e6f7ff; /* Jasny niebieski kolor tła dla wiersza */
+    color: #1890ff; /* Kolor tekstu dla lepszej widoczności */
+}

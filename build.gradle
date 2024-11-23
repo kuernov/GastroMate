@@ -9,7 +9,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
 
@@ -21,6 +21,8 @@ configurations {
 
 repositories {
 	mavenCentral()
+
+
 }
 
 dependencies {
@@ -28,7 +30,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.liquibase:liquibase-core'
+	implementation 'io.jsonwebtoken:jjwt:0.12.6'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -38,6 +42,12 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testRuntimeOnly('com.h2database:h2')
+	implementation 'org.apache.poi:poi:5.2.3'
+	implementation 'org.apache.poi:poi-ooxml:5.2.3'
+	implementation 'org.apache.commons:commons-math3:3.6.1'
+	implementation 'org.json:json:20231013'
+
+
 }
 
 tasks.named('test') {
