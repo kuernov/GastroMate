@@ -11,7 +11,11 @@ import com.pwr.gastromate.repository.AddressRepository;
 import com.pwr.gastromate.repository.UserRepository;
 import com.pwr.gastromate.service.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +32,22 @@ public class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+
+    public UserDetails authenticate(String email, String password) {
+        // Autentykacja użytkownika
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+
+        // Pobranie szczegółów użytkownika po weryfikacji
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Invalid email or password"));
+    }
+
+    public UserDetails loadUserByUsername(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+    }
+
 
     public UserDTO getUserById(Integer id) {
         User user = userRepository.findById(id)
@@ -47,14 +67,6 @@ public class UserService {
         return userMapper.toDTO(savedUser);
     }
 
-    public UserController.LoginResponse logIn(UserController.LoginRequest request) {
-        return findByEmail(request.email())
-                .filter(user -> passwordEncoder.matches(request.password(), user.getPassword()))
-                .map(jwtService::generateToken)
-                .map(UserController.LoginResponse::new)
-                // return proper response instead of just throwing
-                .orElseThrow(() -> new BadCredentialsException("InvaLid email or password."));
-    }
 
     public UserDTO updateUser(Integer id, UserDTO userDTO) {
         User user = userRepository.findById(id)
@@ -68,6 +80,7 @@ public class UserService {
         User updatedUser = userRepository.save(user);
         return userMapper.toDTO(updatedUser);
     }
+
 
     public void register(UserController.RegistrationRequest request){
         var user = User.builder()

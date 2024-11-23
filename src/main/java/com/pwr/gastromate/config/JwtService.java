@@ -1,11 +1,14 @@
 package com.pwr.gastromate.config;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -42,6 +45,15 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
 
     }
+    public boolean isRefreshTokenValid(String token) {
+        try {
+            Claims claims = extractAllClaims(token);
+            return !isTokenExpired(token); // Dodatkowe warunki, np. role, można dodać tutaj
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
@@ -52,9 +64,27 @@ public class JwtService {
                 .claims(extraClaims)
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis()+1000*60*60*24))
+                .expiration(new Date(System.currentTimeMillis()+1000*60*2))
                 .signWith(getSignKey())
                 .compact();
+    }
+
+    public String generateRefreshToken(UserDetails userDetails) {
+        return Jwts.builder()
+                .subject(userDetails.getUsername())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7)) // 7 dni
+                .signWith(getSignKey())
+                .compact();
+    }
+
+    public boolean isTokenValid(String token) {
+        try {
+            extractAllClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private SecretKey getSignKey() {
