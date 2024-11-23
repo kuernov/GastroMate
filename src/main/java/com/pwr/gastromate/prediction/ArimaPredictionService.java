@@ -17,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,6 +38,7 @@ public class ArimaPredictionService {
     private IngredientRepository ingredientRepository;
     private final RestTemplate restTemplate = new RestTemplate();
     private final String sarimaApiUrl = "http://sarima-predict:5000/predict";
+
 
     public List<IngredientPredictionDTO> generatePredictionsForIngredients(List<Integer> ingredientIds) {
         List<IngredientPredictionDTO> results = new ArrayList<>();
@@ -59,12 +61,15 @@ public class ArimaPredictionService {
                 dates.add(prediction.getDate());
                 values.add(prediction.getPredictedValue());
             }
+            List<BigDecimal> roundedValues = values.stream()
+                    .map(value -> BigDecimal.valueOf(value).setScale(3, RoundingMode.HALF_UP))
+                    .toList();
 
             // Tworzenie DTO dla składnika
             IngredientPredictionDTO result = new IngredientPredictionDTO(
                     ingredient.getName(),
                     dates,
-                    values
+                    roundedValues
             );
 
             results.add(result);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Card, Row, Col, Spin, Alert, message, Button } from "antd";
+import {Table, Card, Row, Col, Spin, Alert, message, Button, Tag} from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -97,6 +97,25 @@ const LowStockIngredients = ({ userId }) => {
                 </span>
             ),
         },
+        {
+            title: "Status",
+            dataIndex: "status",
+            key: "status",
+            render: (status) => {
+                let color;
+                if (status === "CRITICAL") color = "red";
+                else if (status === "LOW_STOCK") color = "orange";
+                else color = "green";
+
+                return <Tag color={color}>{status.replace("_", " ")}</Tag>;
+            },
+            filters: [
+                { text: "Critical", value: "CRITICAL" },
+                { text: "Low Stock", value: "LOW_STOCK" },
+                { text: "Normal", value: "NORMAL" },
+            ],
+            onFilter: (value, record) => record.status === value,
+        },
     ];
 
     if (loading) return <Spin tip="Loading data..." />;
@@ -140,13 +159,13 @@ const LowStockIngredients = ({ userId }) => {
                                     >
                                         <p>
                                             <strong>Total Predicted Value: </strong>
-                                            {totalPredicted}
+                                            {prediction.totalPredictedValue}
                                         </p>
                                         <Table
                                             dataSource={prediction.date.map((date, idx) => ({
                                                 key: idx,
                                                 date: new Date(date).toLocaleDateString(),
-                                                predictedValue: prediction.predictedValue[idx]?.toFixed(2) || 0,
+                                                predictedValue: prediction.predictedValue[idx],
                                             }))}
                                             columns={[
                                                 {

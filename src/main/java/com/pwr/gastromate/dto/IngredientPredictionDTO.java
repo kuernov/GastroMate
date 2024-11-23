@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 @Getter
 @Setter
@@ -13,5 +14,14 @@ import java.util.List;
 public class IngredientPredictionDTO {
     private String ingredientName;
     private List<String> date;
-    private List<Double> predictedValue;
+    private List<BigDecimal> predictedValue;
+    private BigDecimal totalPredictedValue;
+
+    public IngredientPredictionDTO(String ingredientName, List<String> date, List<BigDecimal> predictedValue) {
+        this.ingredientName = ingredientName;
+        this.date = date;
+        this.predictedValue = predictedValue;
+        this.totalPredictedValue = predictedValue.stream()
+                .reduce(BigDecimal.ZERO, BigDecimal::add); // Obliczanie sumy
+    }
 }
