@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.pwr.gastromate.converter.ListToJsonConverter;
 import jakarta.persistence.*;
 import lombok.*;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -88,4 +89,5 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return false;
     }
+
 }

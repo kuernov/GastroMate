@@ -49,7 +49,7 @@ export const register = async (userData) => {
 export const refreshAccessToken = async () => {
     try {
         const response = await axios.post(
-            `${process.env.REACT_APP_API_URL || "http://localhost:8080"}/refresh-token`,
+            `${process.env.REACT_APP_API_URL || "http://localhost:8080"}/auth/refresh`,
             {},
             { withCredentials: true } // Włączenie ciasteczek HttpOnly
         );

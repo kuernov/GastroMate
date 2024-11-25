@@ -2,6 +2,7 @@ package com.pwr.gastromate.controller;
 
 
 import com.pwr.gastromate.config.JwtService;
+import com.pwr.gastromate.config.MyUserDetailsService;
 import com.pwr.gastromate.service.UserService;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +24,9 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
     private final JwtService jwtService;
+    private final MyUserDetailsService userDetailsService;
+
+
     @PostMapping("/registration")
     public void register(@RequestBody @Validated RegistrationRequest request) {
         userService.register(request);
@@ -31,7 +36,7 @@ public class UserController {
     ) {}
 
     @PostMapping("/login")
-    public LoginResponse logIn(@RequestBody @Validated LoginRequest request) {
+    public ResponseEntity<?> logIn(@RequestBody @Validated LoginRequest request) {
         var userDetails = userService.authenticate(request.email(), request.password());
 
         // Generowanie tokenów
@@ -46,21 +51,33 @@ public class UserController {
                 .maxAge(7 * 24 * 60 * 60) // 7 dni
                 .build();
 
-        return new LoginResponse(accessToken, cookie.toString());
+        return ResponseEntity.ok()
+                .header("Set-Cookie", cookie.toString()) // Dodanie ciasteczka do nagłówków odpowiedzi
+                .body(Map.of(
+                        "accessToken", accessToken // Access token zwracany w odpowiedzi
+                ));
 
     }
 
-    @PostMapping("/refresh-token")
-    public ResponseEntity<?> refreshToken(@CookieValue("refreshToken") String refreshToken) {
-        if (jwtService.isTokenValid(refreshToken)) {
+    @PostMapping("/auth/refresh")
+    public ResponseEntity<?> refreshAccessToken(@CookieValue(name = "refreshToken", required = false) String refreshToken) {
+        if (refreshToken == null || !jwtService.isRefreshTokenValid(refreshToken)) {
+            System.out.println("Is refresh token valid: " + jwtService.isRefreshTokenValid(refreshToken));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired refresh token");
+        }
+
+        try {
             String username = jwtService.extractUsername(refreshToken);
-            var userDetails = userService.loadUserByUsername(username);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             String newAccessToken = jwtService.generateToken(userDetails);
             return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Failed to refresh access token");
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
