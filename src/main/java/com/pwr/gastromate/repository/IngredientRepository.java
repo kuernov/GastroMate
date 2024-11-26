@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -17,4 +18,8 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Integer>
     List<Ingredient> findByUserId(Integer userId);
     boolean existsByName(String name);
     Ingredient findByName(String name);
+    @Query("SELECT COALESCE(SUM(q.quantity), 0) " +
+            "FROM Ingredient q " +
+            "WHERE q.name = :name AND q.user.id = :id")
+    BigDecimal sumQuantityByNameAndUserId(@Param("name") String name, @Param("id") Integer id);
 }

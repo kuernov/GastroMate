@@ -56,7 +56,7 @@ const LowStockIngredients = ({ userId }) => {
         },
         {
             title: "Stock Quantity",
-            dataIndex: ["ingredient", "quantity"],
+            dataIndex: ["quantitySum"],
             key: "quantity",
             render: (quantity) => <span>{quantity.toFixed(2)}</span>,
         },

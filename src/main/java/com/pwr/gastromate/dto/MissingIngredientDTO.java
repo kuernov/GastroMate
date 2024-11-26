@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.swing.text.StyledEditorKit;
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -13,8 +14,9 @@ import javax.swing.text.StyledEditorKit;
 @NoArgsConstructor
 public class MissingIngredientDTO {
     private IngredientDTO ingredient;
+    private BigDecimal quantitySum;
     private Double averageUsage;
-    private Double difference;
+    private BigDecimal difference;
     private StockStatus status;
 
 }
