@@ -1,5 +1,9 @@
 package com.pwr.gastromate.service.load_data;
 import com.pwr.gastromate.data.*;
+import com.pwr.gastromate.data.menuItem.MenuItem;
+import com.pwr.gastromate.data.order.Order;
+import com.pwr.gastromate.data.order.OrderItem;
+import com.pwr.gastromate.data.order.OrderItemId;
 import com.pwr.gastromate.repository.MenuItemRepository;
 import com.pwr.gastromate.repository.OrderRepository;
 import com.pwr.gastromate.repository.UserRepository;

@@ -1,12 +1,11 @@
 package com.pwr.gastromate.controller;
 
 import com.pwr.gastromate.data.User;
-import com.pwr.gastromate.dto.GroupedIngredientDTO;
-import com.pwr.gastromate.dto.IngredientDTO;
+import com.pwr.gastromate.dto.ingredient.GroupedIngredientDTO;
+import com.pwr.gastromate.dto.ingredient.IngredientDTO;
 import com.pwr.gastromate.service.IngredientService;
 import com.pwr.gastromate.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

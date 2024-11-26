@@ -2,6 +2,7 @@ import React from "react";
 import { Modal, Form, Input, InputNumber, Button, message } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import api from "../api";
 
 const UnitForm = ({ visible, setShowNewUnitModal, units, setUnits }) => {
     const [newUnitForm] = Form.useForm();
@@ -9,25 +10,11 @@ const UnitForm = ({ visible, setShowNewUnitModal, units, setUnits }) => {
 
     const addNewUnit = async (unitValues) => {
         try {
-            const token = localStorage.getItem("accessToken");
-
-            if (!token) {
-                message.error("User not authenticated");
-                navigate("/login");
-                return;
-            }
-
-            const response = await axios.post(
-                "http://localhost:8080/units",
-                {
-                    name: unitValues.name,
-                    abbreviation: unitValues.abbreviation,
-                    conversionToGrams: unitValues.conversionToGrams,
-                },
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
+            const response = await api.post("/units", {
+                name: unitValues.name,
+                abbreviation: unitValues.abbreviation,
+                conversionToGrams: unitValues.conversionToGrams,
+            });
 
             if (response.status === 200 || response.status === 201) {
                 setUnits([...units, response.data]);
@@ -39,6 +26,7 @@ const UnitForm = ({ visible, setShowNewUnitModal, units, setUnits }) => {
             }
         } catch (error) {
             message.error("Failed to add new unit");
+            console.error("Error adding new unit:", error);
         }
     };
 

@@ -1,9 +1,9 @@
 package com.pwr.gastromate.specification;
 
-import com.pwr.gastromate.data.Order;
+import com.pwr.gastromate.data.order.Order;
 import com.pwr.gastromate.data.User;
 import org.springframework.data.jpa.domain.Specification;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 
 public class OrderSpecification {

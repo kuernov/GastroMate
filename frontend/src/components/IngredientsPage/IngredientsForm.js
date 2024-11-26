@@ -3,6 +3,7 @@ import {Form, InputNumber, Button, Select, AutoComplete, message, Card, Input} f
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import UnitForm from "../UnitForm";
+import api from "../../api";
 
 const IngredientsForm = ({ units, setIngredients, ingredients, setUnits }) => {
     const [form] = Form.useForm();
@@ -14,33 +15,20 @@ const IngredientsForm = ({ units, setIngredients, ingredients, setUnits }) => {
     const onFinish = async (values) => {
         try {
             setLoading(true);
-            const token = localStorage.getItem("accessToken");
 
-            if (!token) {
-                message.error("User not authenticated");
-                navigate("/login");
-                return;
-            }
-
-            // Wysyłanie danych składnika do backendu
-            const response = await axios.post(
-                "http://localhost:8080/ingredients",
-                {
-                    name: ingredientName || values.name,
-                    quantity: values.quantity,
-                    unitId: values.unit,
-                    expiryDate: values.expiryDate,
-                },
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
+            const response = await api.post("/ingredients", {
+                name: ingredientName || values.name,
+                quantity: values.quantity,
+                unitId: values.unit,
+                expiryDate: values.expiryDate,
+            });
 
             setIngredients([...ingredients, response.data]);
             message.success("Ingredient added successfully!");
             form.resetFields();
-            setIngredientName(""); // Wyczyść niestandardową nazwę po dodaniu
+            setIngredientName("");
         } catch (error) {
+            console.error("Failed to add ingredient:", error);
             message.error("Failed to add ingredient");
         } finally {
             setLoading(false);

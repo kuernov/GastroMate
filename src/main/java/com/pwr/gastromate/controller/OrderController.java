@@ -1,13 +1,9 @@
 package com.pwr.gastromate.controller;
 import org.springframework.format.annotation.DateTimeFormat;
-import com.pwr.gastromate.data.Order;
 import com.pwr.gastromate.data.User;
-import com.pwr.gastromate.dto.OrderDTO;
-import com.pwr.gastromate.dto.OrderItemDTO;
+import com.pwr.gastromate.dto.order.OrderDTO;
 import com.pwr.gastromate.service.OrderService;
 import com.pwr.gastromate.service.UserService;
-import com.pwr.gastromate.service.mapper.OrderMapper;
-import jakarta.annotation.security.RolesAllowed;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -16,8 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("/orders")
@@ -28,7 +23,6 @@ public class OrderController {
 
 
     @GetMapping
-    @RolesAllowed("USER")
     public ResponseEntity<Page<OrderDTO>> getUserOrders(Principal principal,
                                                         @RequestParam(defaultValue = "0") int page,
                                                         @RequestParam(defaultValue = "10") int size,
@@ -44,9 +38,5 @@ public class OrderController {
         return new ResponseEntity<>(userOrders, HttpStatus.OK);
     }
 
-    @GetMapping("/test-ingredient-usage")
-    public void testIngredientUsage(@RequestParam Integer ingredientId) {
-        orderService.testIngredientUsageQuery(ingredientId);
-    }
 
 }

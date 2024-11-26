@@ -1,10 +1,11 @@
 package com.pwr.gastromate.prediction;
 
-import com.pwr.gastromate.data.Order;
 import com.pwr.gastromate.data.User;
-import com.pwr.gastromate.dto.*;
+import com.pwr.gastromate.dto.ingredient.IngredientPredictionDTO;
+import com.pwr.gastromate.dto.ingredient.IngredientRequest;
+import com.pwr.gastromate.dto.report.WeeklyAverageUsageDTO;
+import com.pwr.gastromate.dto.restock.PredictionResultDTO;
 import com.pwr.gastromate.exception.UnauthorizedException;
-import com.pwr.gastromate.prediction.ArimaPredictionService;
 import com.pwr.gastromate.repository.OrderRepository;
 import com.pwr.gastromate.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

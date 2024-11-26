@@ -9,6 +9,7 @@ import WeeklySalesQuantityChart from "./WeeklySalesQuantityChart";
 import TopSellingTable from "./TopSellingTable";
 import { Spin } from 'antd';
 import CustomLineChart from "./CustomLineChart";
+import api from "../../api";
 
 
 const SalesReportPage = () => {
@@ -32,27 +33,26 @@ const SalesReportPage = () => {
     };
 
     const fetchReportData = async (startDate, endDate) => {
-        const token = localStorage.getItem("accessToken");
-        if (!token) {
-            message.error("User not authenticated");
-            navigate("/login");
-            return;
-        }
-
         try {
-            const headers = { Authorization: `Bearer ${token}` };
             const requests = [
-                axios.get(`http://localhost:8080/reports/total-revenue`, { params: { startDate, endDate }, headers }),
-                axios.get(`http://localhost:8080/reports/category-revenue`, { params: { startDate, endDate }, headers }),
-                axios.get(`http://localhost:8080/reports/orders-count`, { params: { startDate, endDate }, headers }),
-                axios.get(`http://localhost:8080/reports/average-order-value`, { params: { startDate, endDate }, headers }),
-                axios.get(`http://localhost:8080/reports/top-selling-items`, { params: { startDate, endDate }, headers }),
-                axios.get(`http://localhost:8080/reports/sales-by-day-of-week`, { params: { startDate, endDate }, headers }),
-                axios.get(`http://localhost:8080/reports/sales-by-hour`, { params: { startDate, endDate }, headers })
-
+                await api.get(`/reports/total-revenue`, { params: { startDate, endDate } }),
+                await api.get(`/reports/category-revenue`, { params: { startDate, endDate } }),
+                await api.get(`/reports/orders-count`, { params: { startDate, endDate } }),
+                await api.get(`/reports/average-order-value`, { params: { startDate, endDate } }),
+                await api.get(`/reports/top-selling-items`, { params: { startDate, endDate } }),
+                await api.get(`/reports/sales-by-day-of-week`, { params: { startDate, endDate } }),
+                await api.get(`/reports/sales-by-hour`, { params: { startDate, endDate } })
             ];
 
-            const [totalRevenueRes, categoryRevenueRes, ordersCountRes, averageOrderValueRes, topSellingItemsRes,salesByDayRes,salesByHourRes] = await Promise.all(requests);
+            const [
+                totalRevenueRes,
+                categoryRevenueRes,
+                ordersCountRes,
+                averageOrderValueRes,
+                topSellingItemsRes,
+                salesByDayRes,
+                salesByHourRes
+            ] = await Promise.all(requests);
 
             setTotalRevenue(totalRevenueRes.data);
             setCategoryRevenue(categoryRevenueRes.data);
@@ -60,12 +60,11 @@ const SalesReportPage = () => {
             setAverageOrderValue(averageOrderValueRes.data);
             setTopSellingItems(topSellingItemsRes.data);
             setSalesByDayOfWeek(salesByDayRes.data);
-            setSalesByHour(salesByHourRes.data)
-            setLoading(false);
+            setSalesByHour(salesByHourRes.data);
         } catch (error) {
-            setLoading(false);
-            console.error("Error fetching report data", error);
             message.error("Failed to fetch report data");
+        } finally {
+            setLoading(false);
         }
     };
 

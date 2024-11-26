@@ -1,23 +1,22 @@
 package com.pwr.gastromate.service;
 
 import com.pwr.gastromate.data.*;
-import com.pwr.gastromate.dto.MenuItemDTO;
-import com.pwr.gastromate.dto.MenuItemIngredientDTO;
-import com.pwr.gastromate.dto.MenuItemIngredientsRequest;
+import com.pwr.gastromate.data.menuItem.MenuItem;
+import com.pwr.gastromate.data.menuItem.MenuItemIngredient;
+import com.pwr.gastromate.dto.menu.MenuItemDTO;
+import com.pwr.gastromate.dto.menu.MenuItemIngredientDTO;
 import com.pwr.gastromate.repository.*;
 import com.pwr.gastromate.service.mapper.MenuItemMapper;
 import com.pwr.gastromate.specification.MenuItemSpecification;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -57,21 +56,13 @@ public class MenuItemService {
         return page.map(MenuItemMapper::toDTO);
     }
 
-//    public List<MenuItemDTO> findAllByUserId(Integer userId) {
-//        List<MenuItem> menuItems = menuItemRepository.findByUserIdSorted(userId);
-//        return menuItems.stream()
-//                .map(MenuItemMapper::toDTO)  // Mapuj każdą encję na DTO
-//                .collect(Collectors.toList());
-//    }
-
-    // Znajdź MenuItem po ID
     public MenuItemDTO findById(Integer id) {
         MenuItem menuItem = menuItemRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("MenuItem not found"));
         return MenuItemMapper.toDTO(menuItem);
     }
 
-
+    @Transactional
     public MenuItemDTO save(MenuItemDTO menuItemDTO, List<MenuItemIngredientDTO> menuItemIngredientDTOS, User user) {
         Set<Category> categories = new HashSet<>(categoryRepository.findAllById(menuItemDTO.getCategoryIds()));
         MenuItem menuItem = MenuItemMapper.toEntity(menuItemDTO, categories);
@@ -99,12 +90,12 @@ public class MenuItemService {
 
     private static MenuItemIngredient getMenuItemIngredient(MenuItemIngredientDTO menuItemIngredientDTO, MenuItem menuItem, Ingredient ingredient) {
         MenuItemIngredient menuItemIngredient = new MenuItemIngredient();
-        menuItemIngredient.setMenuItem(menuItem);  // Przypisujemy do danego MenuItem
-        menuItemIngredient.setIngredient(ingredient);  // Przypisujemy składnik
+        menuItemIngredient.setMenuItem(menuItem);
+        menuItemIngredient.setIngredient(ingredient);
         menuItemIngredient.setQuantityRequired(menuItemIngredientDTO.getQuantityRequired());
         return menuItemIngredient;
     }
-
+    @Transactional
     // Usuń element MenuItem po ID
     public void deleteById(Integer id) {
         menuItemRepository.deleteById(id);

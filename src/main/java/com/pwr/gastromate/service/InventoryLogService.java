@@ -5,6 +5,7 @@ import com.pwr.gastromate.data.User;
 import com.pwr.gastromate.dto.InventoryLogDTO;
 import com.pwr.gastromate.repository.InventoryLogRepository;
 import com.pwr.gastromate.service.mapper.InventoryLogMapper;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 public class InventoryLogService {
     private final InventoryLogRepository inventoryLogRepository;
     private final InventoryLogMapper inventoryLogMapper;
+    @Transactional
     public InventoryLogDTO save(User user, InventoryLogDTO inventoryLogDTO) {
         InventoryLog inventoryLogIngredient = inventoryLogMapper.toEntity(inventoryLogDTO, user);
         System.out.println("Saving InventoryLog with changeType: " + inventoryLogIngredient.getChangeType());

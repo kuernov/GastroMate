@@ -1,14 +1,12 @@
 package com.pwr.gastromate.service.mapper;
 
-import com.pwr.gastromate.data.MenuItem;
-import com.pwr.gastromate.dto.MenuItemDTO;
-import com.pwr.gastromate.dto.MenuItemIngredientDTO;
+import com.pwr.gastromate.data.menuItem.MenuItem;
+import com.pwr.gastromate.dto.menu.MenuItemDTO;
+import com.pwr.gastromate.dto.menu.MenuItemIngredientDTO;
 
 import com.pwr.gastromate.data.Category;
-import com.pwr.gastromate.data.User;
 import org.springframework.stereotype.Component;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;

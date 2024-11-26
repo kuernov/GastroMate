@@ -2,9 +2,9 @@ package com.pwr.gastromate.service;
 
 import com.pwr.gastromate.data.Ingredient;
 import com.pwr.gastromate.data.User;
-import com.pwr.gastromate.dto.MissingIngredientDTO;
-import com.pwr.gastromate.dto.MissingItemsResponse;
-import com.pwr.gastromate.dto.StockStatus;
+import com.pwr.gastromate.dto.restock.MissingIngredientDTO;
+import com.pwr.gastromate.dto.restock.MissingItemsResponse;
+import com.pwr.gastromate.dto.restock.StockStatus;
 import com.pwr.gastromate.repository.IngredientRepository;
 import com.pwr.gastromate.repository.OrderItemRepository;
 import com.pwr.gastromate.service.mapper.IngredientMapper;
@@ -37,8 +37,8 @@ public class MissingItemsService {
             Ingredient ingredient = ingredientRepository.findById((Integer) row[0]).orElseThrow();
             BigDecimal averageUsageDecimal = (BigDecimal) row[1];
             double averageUsage = averageUsageDecimal != null ? averageUsageDecimal.doubleValue() : 0.0;
-
-            double difference = ingredient.getQuantity() - averageUsage;
+            BigDecimal quantitySum = ingredientRepository.sumQuantityByNameAndUserId(ingredient.getName(),user.getId());
+            BigDecimal difference = quantitySum.subtract(BigDecimal.valueOf(averageUsage));
 
             StockStatus status;
             if (ingredient.getQuantity() < averageUsage * CRITICAL_THRESHOLD) {
@@ -48,9 +48,9 @@ public class MissingItemsService {
             } else {
                 status = StockStatus.NORMAL;
             }
-
             items.add(new MissingIngredientDTO(
                     ingredientMapper.toDTO(ingredient),
+                    quantitySum,
                     averageUsage,
                     difference,
                     status
@@ -59,7 +59,7 @@ public class MissingItemsService {
 
         items.sort(Comparator
                 .comparing(MissingIngredientDTO::getStatus) // Sortowanie po statusie
-                .thenComparingDouble(MissingIngredientDTO::getDifference));
+                .thenComparingDouble(missingIngredientDTO -> missingIngredientDTO.getDifference().doubleValue()));
         response.getMissingItems().addAll(items);
 
         return response;

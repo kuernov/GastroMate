@@ -1,10 +1,10 @@
 package com.pwr.gastromate.service.mapper;
 
-import com.pwr.gastromate.data.MenuItem;
-import com.pwr.gastromate.data.Order;
-import com.pwr.gastromate.data.OrderItem;
-import com.pwr.gastromate.data.OrderItemId;
-import com.pwr.gastromate.dto.OrderItemDTO;
+import com.pwr.gastromate.data.menuItem.MenuItem;
+import com.pwr.gastromate.data.order.Order;
+import com.pwr.gastromate.data.order.OrderItem;
+import com.pwr.gastromate.data.order.OrderItemId;
+import com.pwr.gastromate.dto.order.OrderItemDTO;
 import org.springframework.stereotype.Component;
 
 @Component

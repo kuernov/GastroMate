@@ -1,9 +1,8 @@
 package com.pwr.gastromate.repository;
 
 
-import com.pwr.gastromate.data.Order;
+import com.pwr.gastromate.data.order.Order;
 import com.pwr.gastromate.data.User;
-import com.pwr.gastromate.dto.DailyIngredientUsageDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

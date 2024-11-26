@@ -2,25 +2,18 @@ package com.pwr.gastromate.prediction;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pwr.gastromate.data.Ingredient;
-import com.pwr.gastromate.dto.DailyIngredientUsageDTO;
-import com.pwr.gastromate.dto.IngredientPredictionDTO;
-import com.pwr.gastromate.dto.PredictionResultDTO;
+import com.pwr.gastromate.dto.report.DailyIngredientUsageDTO;
+import com.pwr.gastromate.dto.ingredient.IngredientPredictionDTO;
+import com.pwr.gastromate.dto.restock.PredictionResultDTO;
 import com.pwr.gastromate.repository.IngredientRepository;
 import com.pwr.gastromate.repository.OrderRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.json.JSONArray;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -28,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor

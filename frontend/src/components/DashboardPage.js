@@ -17,9 +17,29 @@ const DashboardPage = () => {
     ];
 
     return (
-        <div style={{ background: "linear-gradient(to bottom, #f0f2f5, #ffffff)", minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-            <Card bordered={false} style={{ width: 500, padding: "20px", boxShadow: "0px 4px 12px rgba(0,0,0,0.1)", borderRadius: "10px", backgroundColor: "#ffffff" }}>
-                <Title level={3} style={{ textAlign: "center", marginBottom: "20px", color: "#af2cfd" }}>Dashboard</Title>
+        <div style={{
+            background: "#f0f2f5", // Jednolity kolor tła zamiast gradientu
+            minHeight: "100vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            margin: 0,
+            padding: 0
+        }}>
+            <Card
+                bordered={false}
+                style={{
+                    width: 500,
+                    padding: "20px",
+                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)", // Subtelniejszy cień
+                    borderRadius: "10px",
+                    backgroundColor: "#ffffff",
+                    margin: "20px", // Dla odstępu od krawędzi
+                }}
+            >
+                <Title level={3} style={{ textAlign: "center", marginBottom: "20px", color: "#af2cfd" }}>
+                    Dashboard
+                </Title>
                 <Text style={{ textAlign: "center", display: "block", marginBottom: "20px", color: "rgba(0, 0, 0, 0.65)" }}>
                     Welcome! Choose one of the options below:
                 </Text>
@@ -37,6 +57,7 @@ const DashboardPage = () => {
                                 borderColor: button.color,
                                 height: "60px",
                                 fontWeight: "bold",
+                                margin: "5px 0" // Odstęp między przyciskami
                             }}
                         >
                             {button.label}

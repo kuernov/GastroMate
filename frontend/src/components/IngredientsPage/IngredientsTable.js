@@ -5,6 +5,7 @@ import '../styles/IngredientsTable.css';
 import { useNavigate } from "react-router-dom";
 import AdjustmentModal from "./AdjustmentModal";
 import ExpandedTable from "./ExpandedTable";
+import api from "../../api";
 
 const IngredientsTable = ({ ingredients, units, loading, onDelete }) => {
     const [editingId, setEditingId] = useState(null);
@@ -37,18 +38,10 @@ const IngredientsTable = ({ ingredients, units, loading, onDelete }) => {
     const onAdjustInventory = async (ingredientId, unitId, values) => {
         const { changeType } = values;
         const quantityChange = Number(values.quantity);
+
         try {
-            const token = localStorage.getItem("accessToken");
-
-            if (!token) {
-                message.error("User not authenticated");
-                navigate("/login");
-                return;
-            }
-
-            await axios.put(`http://localhost:8080/ingredients/${ingredientId}/quantity`, null, {
+            await api.put(`/ingredients/${ingredientId}/quantity`, null, {
                 params: { quantityChange, changeType },
-                headers: { 'Authorization': `Bearer ${token}` }
             });
 
             message.success("Inventory adjusted successfully");

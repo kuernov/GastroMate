@@ -1,6 +1,6 @@
 package com.pwr.gastromate.specification;
 
-import com.pwr.gastromate.data.MenuItem;
+import com.pwr.gastromate.data.menuItem.MenuItem;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
