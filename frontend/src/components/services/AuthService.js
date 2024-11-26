@@ -51,7 +51,7 @@ export const refreshAccessToken = async () => {
         const response = await axios.post(
             `${process.env.REACT_APP_API_URL || "http://localhost:8080"}/auth/refresh`,
             {},
-            { withCredentials: true } // Włączenie ciasteczek HttpOnly
+            { withCredentials: true } // Wymuszenie wysłania ciasteczek
         );
 
         if (response.status === 200) {

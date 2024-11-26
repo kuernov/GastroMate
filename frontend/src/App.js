@@ -43,19 +43,25 @@ const App = () => {
     };
 
     useEffect(() => {
-        const initializeAuth = async () => {
+        const checkAndRefreshToken = async () => {
             try {
-                const newAccessToken = await refreshAccessToken();
-                TokenService.setToken(newAccessToken);
-                setIsLoggedIn(true);
+                // Jeśli accessToken istnieje, odśwież token
+                if (TokenService.getToken()) {
+                    const newAccessToken = await refreshAccessToken();
+                    TokenService.setToken(newAccessToken);
+                    setIsLoggedIn(true);
+                } else {
+                    // Brak accessToken — użytkownik niezalogowany
+                    setIsLoggedIn(false);
+                }
             } catch (error) {
-                console.error("Failed to refresh token:", error);
+                console.warn("Failed to refresh access token or no valid session:", error);
                 TokenService.clearToken();
                 setIsLoggedIn(false);
             }
         };
 
-        initializeAuth();
+        checkAndRefreshToken();
     }, []);
 
     return (
@@ -64,6 +70,12 @@ const App = () => {
                 <HeaderComponent isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
                 <Content style={{ padding: "50px 50px" }}>
                     <Routes>
+                        <Route
+                            path="/"
+                            element={
+                                isLoggedIn ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
+                            }
+                        />
                         <Route
                             path="/login"
                             element={<LoginPage setIsLoggedIn={setIsLoggedIn} />}
