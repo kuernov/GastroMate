@@ -1,26 +1,17 @@
 import React from "react";
 import { Card, Form, Input, Button, message } from "antd";
-import { useNavigate } from "react-router-dom"; // Importujemy useNavigate
+import { useNavigate } from "react-router-dom";
+import { register } from "./services/AuthService";
+
 
 const RegisterPage = () => {
-    const navigate = useNavigate(); // Hook do nawigacji
+    const navigate = useNavigate();
 
     const onFinish = async (values) => {
         try {
-            const response = await fetch("http://localhost:8080/registration", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(values),
-            });
-
-            if (response.ok) {
-                message.success("Registration successful!");
-                navigate("/login"); // Przekierowanie na stronę logowania po sukcesie
-            } else {
-                message.error("Registration failed");
-            }
+            await register(values);
+            message.success("Registration successful!");
+            navigate("/login"); 
         } catch (error) {
             message.error("An error occurred during registration");
         }

@@ -3,6 +3,7 @@ import { Table, message, DatePicker } from 'antd';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import moment from 'moment';
+import api from "../api";
 
 const { RangePicker } = DatePicker;
 
@@ -16,31 +17,20 @@ const OrdersPage = () => {
 
     const fetchData = async (page = 0, startDate, endDate) => {
         try {
-            const token = localStorage.getItem("accessToken");
-            if (!token) {
-                message.error("User not authenticated");
-                navigate("/login");
-                return;
-            }
-
-            // Prepare date filters as query parameters if they are set
             const params = {
                 page,
                 size: 10,
-                startDate: startDate ? startDate.format('YYYY-MM-DD') : undefined,
-                endDate: endDate ? endDate.format('YYYY-MM-DD') : undefined
+                startDate: startDate ? startDate.format("YYYY-MM-DD") : undefined,
+                endDate: endDate ? endDate.format("YYYY-MM-DD") : undefined,
             };
 
-            const ordersResponse = await axios.get("http://localhost:8080/orders", {
-                headers: { Authorization: `Bearer ${token}` },
-                params,
-            });
+            const ordersResponse = await api.get("/orders", { params });
 
             setOrders(ordersResponse.data.content);
             setTotalPages(ordersResponse.data.totalPages);
-            setLoading(false);
         } catch (error) {
             message.error("Failed to fetch data");
+        } finally {
             setLoading(false);
         }
     };

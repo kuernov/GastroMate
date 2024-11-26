@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { PlusOutlined } from "@ant-design/icons";
 import CategoryForm from "../CategoryForm";
+import api from "../../api";
 
 const MenuItemsForm = ({ ingredients, units, categories, setCategories, menuItems, setMenuItems }) => {
     const [form] = Form.useForm();
@@ -12,42 +13,32 @@ const MenuItemsForm = ({ ingredients, units, categories, setCategories, menuItem
 
     const navigate = useNavigate();
 
-    // Zapisanie nowego elementu menu
     const onFinish = async (values) => {
         try {
-            const token = localStorage.getItem("accessToken");
+            setLoading(true);
 
-            if (!token) {
-                message.error("User not authenticated");
-                navigate("/login");
-                return;
-            }
-
-            const response = await axios.post(
-                "http://localhost:8080/menu",
-                {
-                    menuItem: {
-                        name: values.name,
-                        description: values.description,
-                        price: values.price,
-                        categoryIds: values.categoryIds, // Przekazanie kategorii
-                    },
-                    // Use the form's menuItemIngredients directly
-                    menuItemIngredients: values.menuItemIngredients.map(ingredient => ({
-                        ingredientId: ingredient.ingredient,
-                        quantityRequired: ingredient.quantityRequired,
-                        unitId: ingredient.unit,
-                    })),
+            const response = await api.post("/menu", {
+                menuItem: {
+                    name: values.name,
+                    description: values.description,
+                    price: values.price,
+                    categoryIds: values.categoryIds,
                 },
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
+                menuItemIngredients: values.menuItemIngredients.map((ingredient) => ({
+                    ingredientId: ingredient.ingredient,
+                    quantityRequired: ingredient.quantityRequired,
+                    unitId: ingredient.unit,
+                })),
+            });
+
             setMenuItems([...menuItems, response.data]);
             message.success("Menu item added successfully!");
             form.resetFields();
         } catch (error) {
+            console.error("Failed to add menu item:", error);
             message.error("Failed to add menu item");
+        } finally {
+            setLoading(false);
         }
     };
 

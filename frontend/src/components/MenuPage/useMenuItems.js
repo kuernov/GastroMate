@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
+import api from "../../api";
 
 const useMenuItems = () => {
     const [menuItems, setMenuItems] = useState([]);
@@ -18,14 +19,11 @@ const useMenuItems = () => {
     const fetchMenuItems = async (currentPage, currentPageSize) => {
         try {
             setLoading(true);
-            const token = localStorage.getItem("accessToken");
-            if (!token) {
-                message.error("User not authenticated");
-                navigate("/login");
-                return;
-            }
 
-            const ingredientsParam = filters.selectedIngredients ? filters.selectedIngredients.join(",") : undefined;
+            const ingredientsParam = filters.selectedIngredients
+                ? filters.selectedIngredients.join(",")
+                : undefined;
+
             const params = {
                 page: currentPage - 1,
                 pageSize: currentPageSize,
@@ -38,49 +36,43 @@ const useMenuItems = () => {
             };
 
             const [menuItemsResponse, categoriesResponse, unitsResponse, ingredientsResponse] = await Promise.all([
-                axios.get("http://localhost:8080/menu/filter", {
-                    params,
-                    headers: { Authorization: `Bearer ${token}` },
-                }),
-                axios.get("http://localhost:8080/categories", {
-                    headers: { Authorization: `Bearer ${token}` },
-                }),
-                axios.get("http://localhost:8080/units", {
-                    headers: { Authorization: `Bearer ${token}` },
-                }),
-                axios.get("http://localhost:8080/ingredients", {
-                    headers: { Authorization: `Bearer ${token}` },
-                }),
+                api.get("/menu/filter", { params }),
+                api.get("/categories"),
+                api.get("/units"),
+                api.get("/ingredients"),
             ]);
 
-            const sortedIngredients = ingredientsResponse.data.sort((a, b) => a.name.localeCompare(b.name));
-            const sortedCategories = categoriesResponse.data.sort((a, b) => a.name.localeCompare(b.name));
+            const sortedIngredients = ingredientsResponse.data.sort((a, b) =>
+                a.name.localeCompare(b.name)
+            );
+            const sortedCategories = categoriesResponse.data.sort((a, b) =>
+                a.name.localeCompare(b.name)
+            );
 
             setIngredients(sortedIngredients);
             setUnits(unitsResponse.data);
             setCategories(sortedCategories);
             setMenuItems(menuItemsResponse.data.content);
             setTotalItems(menuItemsResponse.data.totalElements);
-            setLoading(false);
         } catch (error) {
             message.error("Failed to fetch menu items");
+        } finally {
             setLoading(false);
         }
     };
 
     const deleteMenuItem = async (menuItemId) => {
         try {
-            const token = localStorage.getItem("accessToken");
-            await axios.delete(`http://localhost:8080/menu/${menuItemId}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            setMenuItems((prevMenuItems) => prevMenuItems.filter((item) => item.id !== menuItemId));
+            await api.delete(`/menu/${menuItemId}`);
+            setMenuItems((prevMenuItems) =>
+                prevMenuItems.filter((item) => item.id !== menuItemId)
+            );
             message.success("Menu item deleted successfully!");
         } catch (error) {
             message.error("Failed to delete menu item");
         }
     };
+
 
     useEffect(() => {
         fetchMenuItems(page, pageSize);

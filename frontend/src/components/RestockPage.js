@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import {Table, Card, Row, Col, Spin, Alert, message, Button, Tag} from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import api from "../api";
 
 const LowStockIngredients = ({ userId }) => {
     const [loading, setLoading] = useState(true);
@@ -15,19 +16,10 @@ const LowStockIngredients = ({ userId }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const token = localStorage.getItem("accessToken");
-                if (!token) {
-                    message.error("User not authenticated");
-                    navigate("/login");
-                    return;
-                }
-
-                const response = await axios.get(`http://localhost:8080/restock/low-stock-items`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+                const response = await api.get("/restock/low-stock-items");
                 setData(response.data.missingItems);
             } catch (err) {
-                setError("Nie udało się pobrać danych z serwera.");
+                setError("Failed to fetch data from server.");
             } finally {
                 setLoading(false);
             }
@@ -44,25 +36,13 @@ const LowStockIngredients = ({ userId }) => {
 
         try {
             setLoadingPredictions(true);
-            const token = localStorage.getItem("accessToken");
-            if (!token) {
-                message.error("User not authenticated");
-                navigate("/login");
-                return;
-            }
-
-            const response = await axios.post(
-                `http://localhost:8080/predict-selected-ingredients`,
-                { ingredientIds: selectedIngredients },
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
-
+            const response = await api.post("/predict-selected-ingredients", {
+                ingredientIds: selectedIngredients,
+            });
             setPredictions(response.data);
             message.success("Predictions generated successfully!");
         } catch (err) {
-            message.error("Failed to generate predictions.");
+            setError("Failed to fetch data from server.");
         } finally {
             setLoadingPredictions(false);
         }
