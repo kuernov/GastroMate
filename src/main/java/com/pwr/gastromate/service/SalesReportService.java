@@ -1,10 +1,9 @@
 package com.pwr.gastromate.service;
 
-import com.pwr.gastromate.data.Order;
-import com.pwr.gastromate.dto.CategoryRevenueDTO;
-import com.pwr.gastromate.dto.SalesByDayOfWeekDTO;
-import com.pwr.gastromate.dto.SalesByHourDTO;
-import com.pwr.gastromate.dto.TopSellingItemDTO;
+import com.pwr.gastromate.dto.report.CategoryRevenueDTO;
+import com.pwr.gastromate.dto.report.SalesByDayOfWeekDTO;
+import com.pwr.gastromate.dto.report.SalesByHourDTO;
+import com.pwr.gastromate.dto.report.TopSellingItemDTO;
 import com.pwr.gastromate.repository.OrderItemRepository;
 import com.pwr.gastromate.repository.OrderRepository;
 import lombok.AllArgsConstructor;

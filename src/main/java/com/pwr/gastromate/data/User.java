@@ -1,18 +1,16 @@
 package com.pwr.gastromate.data;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.pwr.gastromate.converter.ListToJsonConverter;
+import com.pwr.gastromate.data.order.Order;
+import com.pwr.gastromate.data.supplyOrder.SupplyOrder;
 import jakarta.persistence.*;
 import lombok.*;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 @Entity

@@ -2,8 +2,7 @@ package com.pwr.gastromate.service.mapper;
 
 import com.pwr.gastromate.data.Ingredient;
 import com.pwr.gastromate.data.Unit;
-import com.pwr.gastromate.data.User;
-import com.pwr.gastromate.dto.IngredientDTO;
+import com.pwr.gastromate.dto.ingredient.IngredientDTO;
 import org.springframework.stereotype.Component;
 
 @Component

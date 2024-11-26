@@ -1,7 +1,7 @@
 package com.pwr.gastromate.controller;
 
 import com.pwr.gastromate.data.User;
-import com.pwr.gastromate.dto.MissingItemsResponse;
+import com.pwr.gastromate.dto.restock.MissingItemsResponse;
 import com.pwr.gastromate.exception.UnauthorizedException;
 import com.pwr.gastromate.service.MissingItemsService;
 import com.pwr.gastromate.service.UserService;

@@ -1,6 +1,7 @@
 package com.pwr.gastromate.data;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.pwr.gastromate.data.menuItem.MenuItemIngredient;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

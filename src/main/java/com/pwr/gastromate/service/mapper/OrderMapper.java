@@ -1,9 +1,9 @@
 package com.pwr.gastromate.service.mapper;
 
-import com.pwr.gastromate.data.Order;
-import com.pwr.gastromate.data.OrderItem;
-import com.pwr.gastromate.dto.OrderDTO;
-import com.pwr.gastromate.dto.OrderItemDTO;
+import com.pwr.gastromate.data.order.Order;
+import com.pwr.gastromate.data.order.OrderItem;
+import com.pwr.gastromate.dto.order.OrderDTO;
+import com.pwr.gastromate.dto.order.OrderItemDTO;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

@@ -68,3 +68,23 @@
   width: 100%;
 }
 
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.ant-layout-content {
+  flex: 1; /* Wypełnia pozostałą przestrzeń między nagłówkiem a stopką */
+}
+
+footer {
+  background-color: #f0f0f0;
+  padding: 20px;
+}
+

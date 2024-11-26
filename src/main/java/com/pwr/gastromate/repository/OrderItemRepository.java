@@ -1,24 +1,21 @@
 package com.pwr.gastromate.repository;
 
-import com.pwr.gastromate.data.OrderItem;
-import com.pwr.gastromate.data.OrderItemId;
-import com.pwr.gastromate.dto.CategoryRevenueDTO;
-import com.pwr.gastromate.dto.SalesByDayOfWeekDTO;
-import com.pwr.gastromate.dto.SalesByHourDTO;
-import com.pwr.gastromate.dto.TopSellingItemDTO;
+import com.pwr.gastromate.data.order.OrderItem;
+import com.pwr.gastromate.data.order.OrderItemId;
+import com.pwr.gastromate.dto.report.CategoryRevenueDTO;
+import com.pwr.gastromate.dto.report.TopSellingItemDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public interface OrderItemRepository extends JpaRepository<OrderItem, OrderItemId> {
-    @Query("SELECT new com.pwr.gastromate.dto.TopSellingItemDTO(oi.menuItem.name, SUM(oi.quantity), SUM(oi.priceAtOrder * oi.quantity)) " +
+    @Query("SELECT new com.pwr.gastromate.dto.report.TopSellingItemDTO(oi.menuItem.name, SUM(oi.quantity), SUM(oi.priceAtOrder * oi.quantity)) " +
             "FROM OrderItem oi " +
             "WHERE oi.order.orderDate BETWEEN :startDate AND :endDate " +
             "AND oi.order.user.id = :userId " +
@@ -35,7 +32,7 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, OrderItemI
                                             @Param("endDate") LocalDateTime endDate,
                                             @Param("userId") Integer userId);
 
-    @Query("SELECT new com.pwr.gastromate.dto.CategoryRevenueDTO(c.name, SUM(oi.priceAtOrder * oi.quantity), SUM(oi.quantity)) " +
+    @Query("SELECT new com.pwr.gastromate.dto.report.CategoryRevenueDTO(c.name, SUM(oi.priceAtOrder * oi.quantity), SUM(oi.quantity)) " +
             "FROM OrderItem oi JOIN oi.menuItem m JOIN m.categories c " +
             "WHERE oi.order.orderDate BETWEEN :startDate AND :endDate " +
             "AND oi.order.user.id = :userId " +

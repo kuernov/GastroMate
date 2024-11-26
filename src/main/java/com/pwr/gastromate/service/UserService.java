@@ -10,6 +10,7 @@ import com.pwr.gastromate.exception.ResourceNotFoundException;
 import com.pwr.gastromate.repository.AddressRepository;
 import com.pwr.gastromate.repository.UserRepository;
 import com.pwr.gastromate.service.mapper.UserMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -38,7 +39,6 @@ public class UserService {
         // Autentykacja użytkownika
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
 
-        // Pobranie szczegółów użytkownika po weryfikacji
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid email or password"));
     }
@@ -81,7 +81,7 @@ public class UserService {
         return userMapper.toDTO(updatedUser);
     }
 
-
+    @Transactional
     public void register(UserController.RegistrationRequest request){
         var user = User.builder()
                 .email(request.email())
@@ -112,11 +112,4 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public Optional<User> findByEmailAndPassword(String email, String password) {
-        return userRepository.findByEmailAndPassword(email, password);
-    }
-
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
 }

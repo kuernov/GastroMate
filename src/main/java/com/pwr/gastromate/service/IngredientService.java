@@ -3,13 +3,12 @@ package com.pwr.gastromate.service;
 import com.pwr.gastromate.data.Ingredient;
 import com.pwr.gastromate.data.Unit;
 import com.pwr.gastromate.data.User;
-import com.pwr.gastromate.dto.GroupedIngredientDTO;
-import com.pwr.gastromate.dto.IngredientDTO;
+import com.pwr.gastromate.dto.ingredient.GroupedIngredientDTO;
+import com.pwr.gastromate.dto.ingredient.IngredientDTO;
 import com.pwr.gastromate.exception.ResourceNotFoundException;
 import com.pwr.gastromate.repository.IngredientRepository;
 import com.pwr.gastromate.repository.InventoryLogRepository;
 import com.pwr.gastromate.repository.UnitRepository;
-import com.pwr.gastromate.repository.UserRepository;
 import com.pwr.gastromate.service.mapper.IngredientMapper;
 import com.pwr.gastromate.specification.IngredientSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +98,7 @@ public class IngredientService {
         Unit unit = new Unit();
         unit.setName(unitName);
         unit.setUser(user);
-        return unitRepository.save(unit);  // Zapisanie nowej jednostki w bazie danych
+        return unitRepository.save(unit);
     }
 
     public void deleteIngredient(Integer id){
@@ -111,7 +110,6 @@ public class IngredientService {
         ingredientRepository.delete(ingredient);
     }
 
-    // Nowa metoda do aktualizacji ilości składnika
     public IngredientDTO updateIngredientQuantity(Integer ingredientId, Float quantityChange, String changeType) {
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
                 .orElseThrow(() -> new ResourceNotFoundException("Ingredient not found for this id: " + ingredientId));

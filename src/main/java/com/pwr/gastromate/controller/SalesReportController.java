@@ -1,16 +1,15 @@
 package com.pwr.gastromate.controller;
 
 import com.pwr.gastromate.data.User;
-import com.pwr.gastromate.dto.CategoryRevenueDTO;
-import com.pwr.gastromate.dto.SalesByDayOfWeekDTO;
-import com.pwr.gastromate.dto.SalesByHourDTO;
-import com.pwr.gastromate.dto.TopSellingItemDTO;
+import com.pwr.gastromate.dto.report.CategoryRevenueDTO;
+import com.pwr.gastromate.dto.report.SalesByDayOfWeekDTO;
+import com.pwr.gastromate.dto.report.SalesByHourDTO;
+import com.pwr.gastromate.dto.report.TopSellingItemDTO;
 import com.pwr.gastromate.exception.UnauthorizedException;
 import com.pwr.gastromate.service.SalesReportService;
 import com.pwr.gastromate.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;

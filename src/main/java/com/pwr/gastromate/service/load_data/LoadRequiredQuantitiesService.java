@@ -1,10 +1,8 @@
 package com.pwr.gastromate.service.load_data;
 
-import com.pwr.gastromate.data.MenuItem;
-import com.pwr.gastromate.data.MenuItemIngredient;
-import com.pwr.gastromate.data.OrderItem;
+import com.pwr.gastromate.data.menuItem.MenuItem;
+import com.pwr.gastromate.data.menuItem.MenuItemIngredient;
 import com.pwr.gastromate.repository.MenuItemRepository;
-import com.pwr.gastromate.repository.OrderItemRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

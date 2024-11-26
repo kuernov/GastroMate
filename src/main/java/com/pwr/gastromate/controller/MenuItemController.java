@@ -1,14 +1,11 @@
 package com.pwr.gastromate.controller;
 
 import com.pwr.gastromate.data.User;
-import com.pwr.gastromate.dto.MenuItemDTO;
-import com.pwr.gastromate.dto.MenuItemIngredientsRequest;
-import com.pwr.gastromate.dto.MenuItemRequest;
+import com.pwr.gastromate.dto.menu.MenuItemDTO;
+import com.pwr.gastromate.dto.menu.MenuItemRequest;
 import com.pwr.gastromate.service.MenuItemService;
 import com.pwr.gastromate.service.UserService;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @AllArgsConstructor

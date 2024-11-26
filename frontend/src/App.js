@@ -67,25 +67,25 @@ const App = () => {
     return (
         <Router>
             <Layout className="layout">
-                <HeaderComponent isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
-                <Content style={{ padding: "50px 50px" }}>
+                <HeaderComponent isLoggedIn={isLoggedIn} handleLogout={handleLogout}/>
+                <Content style={{padding: "50px 50px"}}>
                     <Routes>
                         <Route
                             path="/"
                             element={
-                                isLoggedIn ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
+                                isLoggedIn ? <Navigate to="/dashboard"/> : <Navigate to="/login"/>
                             }
                         />
                         <Route
                             path="/login"
-                            element={<LoginPage setIsLoggedIn={setIsLoggedIn} />}
+                            element={<LoginPage setIsLoggedIn={setIsLoggedIn}/>}
                         />
-                        <Route path="/register" element={<RegisterPage />} />
+                        <Route path="/register" element={<RegisterPage/>}/>
                         <Route
                             path="/dashboard"
                             element={
                                 <ProtectedRoute isLoggedIn={isLoggedIn}>
-                                    <DashboardPage />
+                                    <DashboardPage/>
                                 </ProtectedRoute>
                             }
                         />
@@ -93,7 +93,7 @@ const App = () => {
                             path="/ingredients"
                             element={
                                 <ProtectedRoute isLoggedIn={isLoggedIn}>
-                                    <IngredientsPage />
+                                    <IngredientsPage/>
                                 </ProtectedRoute>
                             }
                         />
@@ -101,7 +101,7 @@ const App = () => {
                             path="/menu"
                             element={
                                 <ProtectedRoute isLoggedIn={isLoggedIn}>
-                                    <MenuItemsPage />
+                                    <MenuItemsPage/>
                                 </ProtectedRoute>
                             }
                         />
@@ -109,7 +109,7 @@ const App = () => {
                             path="/orders"
                             element={
                                 <ProtectedRoute isLoggedIn={isLoggedIn}>
-                                    <OrdersPage />
+                                    <OrdersPage/>
                                 </ProtectedRoute>
                             }
                         />
@@ -117,7 +117,7 @@ const App = () => {
                             path="/reports"
                             element={
                                 <ProtectedRoute isLoggedIn={isLoggedIn}>
-                                    <SalesReportPage />
+                                    <SalesReportPage/>
                                 </ProtectedRoute>
                             }
                         />
@@ -125,34 +125,38 @@ const App = () => {
                             path="/restock"
                             element={
                                 <ProtectedRoute isLoggedIn={isLoggedIn}>
-                                    <RestockPage />
+                                    <RestockPage/>
                                 </ProtectedRoute>
                             }
                         />
-                        <Route path="*" element={<Navigate to="/login" />} />
+                        <Route path="*" element={<Navigate to="/login"/>}/>
                     </Routes>
                 </Content>
-                <Footer style={{ textAlign: "center" }}>
-                    GastroMate ©2024 Created by You
-                </Footer>
+                <footer style={{backgroundColor: '#f0f0f0', padding: '20px', textAlign: 'center'}}>
+                    <div>
+                        <p>© 2024 GastroMate
+                        </p>
+                        <p>Version: 1.0.0</p>
+                    </div>
+                </footer>
             </Layout>
         </Router>
     );
 };
 
-const HeaderComponent = ({ isLoggedIn, handleLogout }) => {
+const HeaderComponent = ({isLoggedIn, handleLogout}) => {
     const location = useLocation();
 
     // Zdefiniowanie elementów menu jako tablica obiektów
     const menuItems = !isLoggedIn
         ? [
-            { key: "/login", label: <Link to="/login">Login</Link> },
-            { key: "/register", label: <Link to="/register">Register</Link> },
+            {key: "/login", label: <Link to="/login">Login</Link>},
+            {key: "/register", label: <Link to="/register">Register</Link>},
         ]
         : [
-            { key: "/dashboard", label: <Link to="/dashboard">Dashboard</Link> },
-            { key: "/ingredients", label: <Link to="/ingredients">Ingredients</Link> },
-            { key: "/menu", label: <Link to="/menu">Menu</Link> },
+            {key: "/dashboard", label: <Link to="/dashboard">Dashboard</Link>},
+            {key: "/ingredients", label: <Link to="/ingredients">Ingredients</Link>},
+            {key: "/menu", label: <Link to="/menu">Menu</Link> },
             { key: "/orders", label: <Link to="/orders">Orders</Link> },
             { key: "/reports", label: <Link to="/reports">Sales Reports</Link> },
             { key: "/restock", label: <Link to="/restock">Restock</Link> },

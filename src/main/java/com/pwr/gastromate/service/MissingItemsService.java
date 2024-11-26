@@ -2,9 +2,9 @@ package com.pwr.gastromate.service;
 
 import com.pwr.gastromate.data.Ingredient;
 import com.pwr.gastromate.data.User;
-import com.pwr.gastromate.dto.MissingIngredientDTO;
-import com.pwr.gastromate.dto.MissingItemsResponse;
-import com.pwr.gastromate.dto.StockStatus;
+import com.pwr.gastromate.dto.restock.MissingIngredientDTO;
+import com.pwr.gastromate.dto.restock.MissingItemsResponse;
+import com.pwr.gastromate.dto.restock.StockStatus;
 import com.pwr.gastromate.repository.IngredientRepository;
 import com.pwr.gastromate.repository.OrderItemRepository;
 import com.pwr.gastromate.service.mapper.IngredientMapper;
