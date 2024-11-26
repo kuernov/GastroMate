@@ -1,5 +1,5 @@
 import React from "react";
-import {Select, InputNumber, Button, Input} from "antd";
+import { Select, InputNumber, Button, Input, Row, Col } from "antd";
 
 const { Option } = Select;
 
@@ -8,75 +8,99 @@ const MenuItemsFilter = ({
                              categories,
                              filters,
                              setFilters,
-                             fetchFilteredMenuItems,
-                             resetFilters
+                             resetFilters,
                          }) => {
+    const updateFilter = (key) => (value) =>
+        setFilters((prev) => ({ ...prev, [key]: value }));
+
     return (
-        <div>
+        <div style={{ padding: "20px", backgroundColor: "#f9f9f9", borderRadius: "8px" }}>
+            <Row gutter={[16, 16]} align="middle" style={{ justifyContent: "center" }}>
+                <Col span={6}>
+                    <Input
+                        placeholder="Search by Name"
+                        onChange={(e) => updateFilter("name")(e.target.value)}
+                        value={filters.name}
+                        style={{ width: "100%" }}
+                    />
+                </Col>
 
-            <Input
-                placeholder="Search by Name"
-                onChange={(e) => setFilters((prev) => ({ ...prev, name: e.target.value }))}
-                style={{ width: "300px", marginBottom: "10px" }}
-                value={filters.name}
-            />
+                <Col span={6}>
+                    <Select
+                        mode="multiple"
+                        placeholder="Select Ingredients"
+                        onChange={updateFilter("selectedIngredients")}
+                        value={filters.selectedIngredients}
+                        style={{ width: "100%" }}
+                    >
+                        {ingredients.map((ingredient) => (
+                            <Option key={ingredient.id} value={ingredient.name}>
+                                {ingredient.name}
+                            </Option>
+                        ))}
+                    </Select>
+                </Col>
 
-            <Select
-                mode="multiple"
-                placeholder="Select Ingredients"
-                onChange={(value) => setFilters((prev) => ({ ...prev, selectedIngredients: value }))}
-                style={{ width: "300px", marginBottom: "10px" }}
-                value={filters.selectedIngredients}
-            >
-                {ingredients.map((ingredient) => (
-                    <Option key={ingredient.id} value={ingredient.name}>
-                        {ingredient.name}
-                    </Option>
-                ))}
-            </Select>
+                <Col span={4}>
+                    <Select
+                        placeholder="Select Category"
+                        onChange={updateFilter("selectedCategory")}
+                        value={filters.selectedCategory}
+                        style={{ width: "100%" }}
+                    >
+                        {categories.map((category) => (
+                            <Option key={category.id} value={category.name}>
+                                {category.name}
+                            </Option>
+                        ))}
+                    </Select>
+                </Col>
 
-            <Select
-                placeholder="Select Category"
-                onChange={(value) => setFilters((prev) => ({ ...prev, selectedCategory: value }))}
-                style={{ width: "200px", marginRight: "10px" }}
-                value={filters.selectedCategory}
-            >
-                {categories.map((category) => (
-                    <Option key={category.id} value={category.name}>
-                        {category.name}
-                    </Option>
-                ))}
-            </Select>
+                <Col span={4}>
+                    <Select
+                        placeholder="Select Size"
+                        onChange={updateFilter("selectedSize")}
+                        value={filters.selectedSize}
+                        style={{ width: "100%" }}
+                    >
+                        <Option value="S">Small</Option>
+                        <Option value="M">Medium</Option>
+                        <Option value="L">Large</Option>
+                        <Option value="XL">X Large</Option>
+                        <Option value="XXL">XX Large</Option>
+                    </Select>
+                </Col>
 
-            <Select
-                placeholder="Select Size"
-                onChange={(value) => setFilters((prev) => ({ ...prev, selectedSize: value }))}
-                style={{ width: "200px", marginRight: "10px" }}
-                value={filters.selectedSize}
-            >
-                <Option value="S">Small</Option>
-                <Option value="M">Medium</Option>
-                <Option value="L">Large</Option>
-            </Select>
+                <Col span={2}>
+                    <InputNumber
+                        placeholder="Min Price"
+                        min={0}
+                        onChange={updateFilter("minPrice")}
+                        value={filters.minPrice}
+                        style={{ width: "100%" }}
+                    />
+                </Col>
 
-            <InputNumber
-                placeholder="Min Price"
-                min={0}
-                onChange={(value) => setFilters((prev) => ({ ...prev, minPrice: value }))}
-                style={{ marginRight: "10px" }}
-                value={filters.minPrice}
-            />
-            <InputNumber
-                placeholder="Max Price"
-                min={0}
-                onChange={(value) => setFilters((prev) => ({ ...prev, maxPrice: value }))}
-                value={filters.maxPrice}
-            />
+                <Col span={2}>
+                    <InputNumber
+                        placeholder="Max Price"
+                        min={0}
+                        onChange={updateFilter("maxPrice")}
+                        value={filters.maxPrice}
+                        style={{ width: "100%" }}
+                    />
+                </Col>
 
-
-            <Button onClick={resetFilters} style={{ marginTop: "10px" }}>
-                Clear Filters
-            </Button>
+                <Col span={2}>
+                    <Button
+                        onClick={resetFilters}
+                        type="primary"
+                        style={{ width: "100%" }}
+                    >
+                        Clear
+                    </Button>
+                </Col>
+            </Row>
         </div>
     );
 };

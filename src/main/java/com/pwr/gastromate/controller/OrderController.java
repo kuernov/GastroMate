@@ -28,7 +28,6 @@ public class OrderController {
 
 
     @GetMapping
-    @RolesAllowed("USER")
     public ResponseEntity<Page<OrderDTO>> getUserOrders(Principal principal,
                                                         @RequestParam(defaultValue = "0") int page,
                                                         @RequestParam(defaultValue = "10") int size,
