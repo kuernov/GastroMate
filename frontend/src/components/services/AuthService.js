@@ -55,7 +55,7 @@ export const refreshAccessToken = async () => {
         );
 
         if (response.status === 200) {
-            return response.data.accessToken; // Zwraca nowy access token
+            return response.data.accessToken;
         } else {
             throw new Error("Failed to refresh token");
         }

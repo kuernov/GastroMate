@@ -51,10 +51,11 @@ public class SecurityConfiguration {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Wyłączanie CSRF
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/registration", "/auth/**").permitAll()
+                        .requestMatchers("/login", "/registration", "/auth/**","/logout").permitAll()
                         .requestMatchers("/ingredients/**", "/units/**").authenticated()// Wymaganie roli USER
                         .anyRequest().authenticated()
                 )
+                .logout(AbstractHttpConfigurer::disable)
                 .authenticationProvider(authenticationProvider()) // Dodanie customowego AuthenticationProvider
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Dodanie filtra JWT
 

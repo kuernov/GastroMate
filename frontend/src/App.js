@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, Link, useLocation } from "react-router-dom";
+import {
+    BrowserRouter as Router,
+    Routes,
+    Route,
+    Navigate,
+    Link,
+    useLocation,
+} from "react-router-dom";
 import { Button, Layout, Menu, message } from "antd";
 import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
@@ -11,14 +18,11 @@ import OrdersPage from "./components/OrdersPage";
 import RestockPage from "./components/RestockPage";
 import "antd/dist/reset.css";
 import "./App.css";
-import { jwtDecode } from "jwt-decode";
 import { TokenService } from "./components/services/TokenService";
-
+import {logout, refreshAccessToken} from "./components/services/AuthService";
 
 const { Header, Content, Footer } = Layout;
 
-// Component to protect routes
-// Component to protect routes
 const ProtectedRoute = ({ isLoggedIn, children }) => {
     return isLoggedIn ? children : <Navigate to="/login" />;
 };
@@ -28,35 +32,31 @@ const App = () => {
 
     const handleLogout = async () => {
         try {
-            await fetch(`${process.env.REACT_APP_API_URL}/logout`, {
-                method: "POST",
-                credentials: "include",
-            });
-            TokenService.clearToken();
+            await logout();
             setIsLoggedIn(false);
             message.success("Successfully logged out.");
-            window.location.href = "/login";
+            //window.location.href = "/login";
         } catch (error) {
             console.error("Logout error:", error);
             message.error("Failed to log out.");
         }
     };
 
-    // Automatically log out if the access token is expired
     useEffect(() => {
-        const token = TokenService.getToken();
-        if (token) {
+        const initializeAuth = async () => {
             try {
-                const { exp } = jwtDecode(token);
-                if (Date.now() >= exp * 1000) {
-                    handleLogout();
-                }
+                const newAccessToken = await refreshAccessToken();
+                TokenService.setToken(newAccessToken);
+                setIsLoggedIn(true);
             } catch (error) {
-                console.error("Error decoding token:", error);
-                handleLogout();
+                console.error("Failed to refresh token:", error);
+                TokenService.clearToken();
+                setIsLoggedIn(false);
             }
-        }
-    }, [isLoggedIn]);
+        };
+
+        initializeAuth();
+    }, []);
 
     return (
         <Router>
@@ -129,7 +129,22 @@ const App = () => {
 };
 
 const HeaderComponent = ({ isLoggedIn, handleLogout }) => {
-    const location = useLocation(); // Przenieś tutaj, wewnątrz <Router>
+    const location = useLocation();
+
+    // Zdefiniowanie elementów menu jako tablica obiektów
+    const menuItems = !isLoggedIn
+        ? [
+            { key: "/login", label: <Link to="/login">Login</Link> },
+            { key: "/register", label: <Link to="/register">Register</Link> },
+        ]
+        : [
+            { key: "/dashboard", label: <Link to="/dashboard">Dashboard</Link> },
+            { key: "/ingredients", label: <Link to="/ingredients">Ingredients</Link> },
+            { key: "/menu", label: <Link to="/menu">Menu</Link> },
+            { key: "/orders", label: <Link to="/orders">Orders</Link> },
+            { key: "/reports", label: <Link to="/reports">Sales Reports</Link> },
+            { key: "/restock", label: <Link to="/restock">Restock</Link> },
+        ];
 
     return (
         <Header className="header">
@@ -140,39 +155,8 @@ const HeaderComponent = ({ isLoggedIn, handleLogout }) => {
                     mode="horizontal"
                     selectedKeys={[location.pathname]}
                     className="menu"
-                >
-                    {!isLoggedIn ? (
-                        <>
-                            <Menu.Item key="/login">
-                                <Link to="/login">Login</Link>
-                            </Menu.Item>
-                            <Menu.Item key="/register">
-                                <Link to="/register">Register</Link>
-                            </Menu.Item>
-                        </>
-                    ) : (
-                        <>
-                            <Menu.Item key="/dashboard">
-                                <Link to="/dashboard">Dashboard</Link>
-                            </Menu.Item>
-                            <Menu.Item key="/ingredients">
-                                <Link to="/ingredients">Ingredients</Link>
-                            </Menu.Item>
-                            <Menu.Item key="/menu">
-                                <Link to="/menu">Menu</Link>
-                            </Menu.Item>
-                            <Menu.Item key="/orders">
-                                <Link to="/orders">Orders</Link>
-                            </Menu.Item>
-                            <Menu.Item key="/reports">
-                                <Link to="/reports">Sales Reports</Link>
-                            </Menu.Item>
-                            <Menu.Item key="/restock">
-                                <Link to="/restock">Restock</Link>
-                            </Menu.Item>
-                        </>
-                    )}
-                </Menu>
+                    items={menuItems} // Użycie nowej właściwości items
+                />
                 {isLoggedIn && (
                     <Button
                         type="primary"
