@@ -6,6 +6,8 @@ import com.pwr.gastromate.data.User;
 import com.pwr.gastromate.data.supplyOrder.SupplyOrder;
 import com.pwr.gastromate.data.supplyOrder.SupplyOrderItem;
 import com.pwr.gastromate.data.supplyOrder.SupplyOrderItemId;
+import com.pwr.gastromate.dto.SupplyOrderDTO;
+import com.pwr.gastromate.dto.SupplyOrderItemDTO;
 import com.pwr.gastromate.dto.SupplyOrderItemRequest;
 import com.pwr.gastromate.dto.SupplyOrderRequest;
 import com.pwr.gastromate.repository.IngredientRepository;
@@ -21,6 +23,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -57,5 +60,22 @@ public class SupplyOrderService {
         supplyOrder.setSupplyOrderItems(itemList);
         supplyOrderRepository.save(supplyOrder);
 
+    }
+
+    public List<SupplyOrderDTO> findLast10Orders(User user) {
+        return supplyOrderRepository.findTop10ByUserIdOrderByOrderDateAsc(user.getId())
+                .stream()
+                .map(order -> new SupplyOrderDTO(
+                        order.getId(),
+                        order.getOrderDate().toLocalDateTime(),
+                        order.getStatus(),
+                        order.getSupplyOrderItems().stream()
+                                .map(item -> new SupplyOrderItemDTO(
+                                        item.getIngredient().getName(),
+                                        item.getQuantity() // Ilość składnika
+                                ))
+                                .toList()
+                ))
+                .toList();
     }
 }

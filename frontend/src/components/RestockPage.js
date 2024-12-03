@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Card, Row, Col, Spin, Alert, message, Button, Tag, InputNumber } from "antd";
+import {Modal, List, Table, Card, Row, Col, Spin, Alert, message, Button, Tag, InputNumber, Collapse } from "antd";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 
@@ -11,7 +11,10 @@ const LowStockIngredients = ({ userId }) => {
     const [loadingPredictions, setLoadingPredictions] = useState(false);
     const [selectedIngredients, setSelectedIngredients] = useState([]);
     const [supplyOrders, setSupplyOrders] = useState({});
+    const [lastOrders, setLastOrders] = useState([]); // Stan dla ostatnich zamówień
+    const [isModalVisible, setIsModalVisible] = useState(false); // Stan widoczności modalnego okienka
     const navigate = useNavigate();
+    const { Panel } = Collapse;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -74,6 +77,24 @@ const LowStockIngredients = ({ userId }) => {
         } finally {
             setLoadingPredictions(false);
         }
+    };
+
+    const fetchLastOrders = async () => {
+        try {
+            const response = await api.get("/supply-order/last-orders");
+            setLastOrders(response.data);
+        } catch (err) {
+            message.error("Failed to fetch last orders.");
+        }
+    };
+
+    const showLastOrders = async () => {
+        await fetchLastOrders();
+        setIsModalVisible(true);
+    };
+
+    const closeLastOrdersModal = () => {
+        setIsModalVisible(false);
     };
 
     const columns = [
@@ -141,8 +162,10 @@ const LowStockIngredients = ({ userId }) => {
     if (error) return <Alert message="Error" description={error} type="error" />;
 
     return (
-        <div style={{ padding: "20px" }}>
-            <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Low Stock Ingredients</h2>
+        <div style={{padding: "20px"}}>
+            <h2 style={{textAlign: "center", fontSize: "24px", fontWeight: "bold", marginBottom: "20px"}}>
+                Low Stock Ingredients
+            </h2>
             <Table
                 dataSource={data}
                 columns={columns}
@@ -151,28 +174,40 @@ const LowStockIngredients = ({ userId }) => {
                     onChange: (selectedRowKeys) => setSelectedIngredients(selectedRowKeys),
                 }}
                 title={() => (
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
                         <Button
                             type="primary"
                             onClick={handleGeneratePredictions}
                             loading={loadingPredictions}
+                            style={{backgroundColor: "#1890ff", color: "white", borderRadius: "5px"}}
                         >
-                            Generate Predictions for Selected Ingredients
+                            Generate Predictions
                         </Button>
                         <Button
                             type="primary"
                             onClick={handleCreateSupplyOrder}
+                            style={{backgroundColor: "#52c41a", color: "white", borderRadius: "5px"}}
                         >
                             Create Supply Order
                         </Button>
+                        <Button
+                            onClick={showLastOrders}
+                            style={{
+                                border: "1px solid #d9d9d9",
+                                borderRadius: "5px",
+                                padding: "5px 15px",
+                            }}
+                        >
+                            Show Last Orders
+                        </Button>
                     </div>
                 )}
-                pagination={{ pageSize: 10 }}
+                pagination={{pageSize: 10}}
             />
 
             {predictions.length > 0 && (
-                <div style={{ padding: "20px", backgroundColor: "#f9f9f9", borderRadius: "10px" }}>
-                    <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Predictions for Selected Ingredients</h2>
+                <div style={{padding: "20px", backgroundColor: "#f9f9f9", borderRadius: "10px"}}>
+                    <h2 style={{textAlign: "center", marginBottom: "20px"}}>Predictions for Selected Ingredients</h2>
                     <Row gutter={[16, 16]}>
                         {predictions.map((prediction, index) => {
                             const totalPredicted = prediction.predictedValue.reduce((sum, value) => sum + value, 0).toFixed(2);
@@ -181,7 +216,7 @@ const LowStockIngredients = ({ userId }) => {
                                     <Card
                                         title={prediction.ingredientName}
                                         bordered={true}
-                                        style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}
+                                        style={{boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"}}
                                     >
                                         <p>
                                             <strong>Total Predicted Value: </strong>
@@ -216,6 +251,47 @@ const LowStockIngredients = ({ userId }) => {
                     </Row>
                 </div>
             )}
+            <Modal
+                title="Last 10 Supply Orders"
+                visible={isModalVisible}
+                onCancel={closeLastOrdersModal}
+                footer={[
+                    <Button key="close" onClick={closeLastOrdersModal}>
+                        Close
+                    </Button>,
+                ]}
+            >
+                <List
+                    dataSource={lastOrders}
+                    renderItem={(order) => (
+                        <List.Item>
+                            <div>
+                                <strong>Order ID:</strong> {order.id}
+                            </div>
+                            <div>
+                                <strong>Date:</strong> {new Date(order.orderDate).toLocaleDateString()}
+                            </div>
+                            <div>
+                                <strong>Status:</strong> {order.status}
+                            </div>
+                            <div style={{marginTop: "10px"}}>
+                                <Collapse>
+                                    <Panel header="Ingredients" key={order.id}>
+                                        <List
+                                            dataSource={order.orderItems}
+                                            renderItem={(item) => (
+                                                <List.Item>
+                                                    <strong>{item.name}</strong> - Quantity: {item.quantity}
+                                                </List.Item>
+                                            )}
+                                        />
+                                    </Panel>
+                                </Collapse>
+                            </div>
+                        </List.Item>
+                    )}
+                />
+            </Modal>
         </div>
     );
 };

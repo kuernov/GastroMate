@@ -1,6 +1,7 @@
 package com.pwr.gastromate.controller;
 
 import com.pwr.gastromate.data.User;
+import com.pwr.gastromate.dto.SupplyOrderDTO;
 import com.pwr.gastromate.dto.SupplyOrderItemRequest;
 import com.pwr.gastromate.dto.SupplyOrderRequest;
 import com.pwr.gastromate.exception.UnauthorizedException;
@@ -9,10 +10,7 @@ import com.pwr.gastromate.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -40,4 +38,10 @@ public class SupplyOrderController {
         return ResponseEntity.ok("Supply order created successfully!");
     }
 
+    @GetMapping("/last-orders")
+    public ResponseEntity<List<SupplyOrderDTO>> getLastOrders(Principal principal) {
+        User user = findUser(principal);
+        List<SupplyOrderDTO> lastOrders = supplyOrderService.findLast10Orders(user);
+        return ResponseEntity.ok(lastOrders);
+    }
 }
