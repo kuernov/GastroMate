@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -26,8 +28,10 @@ public class SupplyOrder {
     private Integer id;
     private Timestamp orderDate;
     private Date deliveryDate;
-    private Enum<DeliveryStatus> status;
-
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "status", nullable = false)
+    private DeliveryStatus status;
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @JsonBackReference

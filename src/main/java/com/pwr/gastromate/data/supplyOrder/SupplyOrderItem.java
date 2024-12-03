@@ -29,7 +29,6 @@ public class SupplyOrderItem {
     @JoinColumn(name = "ingredient_id", nullable = false)
     private Ingredient ingredient;
 
-    private int quantityOrdered;
-    private BigDecimal priceAtOrder;
+    private BigDecimal quantity;
 
 }

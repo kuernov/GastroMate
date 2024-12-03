@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {Table, Card, Row, Col, Spin, Alert, message, Button, Tag} from "antd";
-import axios from "axios";
+import { Table, Card, Row, Col, Spin, Alert, message, Button, Tag, InputNumber } from "antd";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 
@@ -11,6 +10,7 @@ const LowStockIngredients = ({ userId }) => {
     const [predictions, setPredictions] = useState([]);
     const [loadingPredictions, setLoadingPredictions] = useState(false);
     const [selectedIngredients, setSelectedIngredients] = useState([]);
+    const [supplyOrders, setSupplyOrders] = useState({});
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -28,6 +28,34 @@ const LowStockIngredients = ({ userId }) => {
         fetchData();
     }, [navigate]);
 
+    const handleSupplyOrderChange = (ingredientId, value) => {
+        setSupplyOrders((prev) => ({
+            ...prev,
+            [ingredientId]: value,
+        }));
+    };
+
+    const handleCreateSupplyOrder = async () => {
+        try {
+            const orderItems = Object.entries(supplyOrders)
+                .filter(([_, quantity]) => quantity > 0) // Filtruj tylko dodatnie wartości
+                .map(([ingredientId, quantity]) => ({
+                    ingredientId: parseInt(ingredientId, 10),
+                    quantity: parseFloat(quantity),
+                }));
+            if (orderItems.length === 0) {
+                message.warning("No items to order.");
+                return;
+            }
+            await api.post("/supply-order", { supplyOrderItemRequestList: orderItems });
+
+            message.success("Supply order created successfully!");
+            setSupplyOrders({});
+        } catch (error) {
+            console.error("Error creating supply order:", error);
+            setError("Failed to create supply order.");
+        }
+    };
     const handleGeneratePredictions = async () => {
         if (selectedIngredients.length === 0) {
             message.warning("Please select at least one ingredient.");
@@ -78,6 +106,17 @@ const LowStockIngredients = ({ userId }) => {
             ),
         },
         {
+            title: "Order Quantity",
+            key: "orderQuantity",
+            render: (_, record) => (
+                <InputNumber
+                    min={0}
+                    value={supplyOrders[record.ingredient.id] || 0}
+                    onChange={(value) => handleSupplyOrderChange(record.ingredient.id, value)}
+                />
+            ),
+        },
+        {
             title: "Status",
             dataIndex: "status",
             key: "status",
@@ -112,14 +151,21 @@ const LowStockIngredients = ({ userId }) => {
                     onChange: (selectedRowKeys) => setSelectedIngredients(selectedRowKeys),
                 }}
                 title={() => (
-                    <Button
-                        type="primary"
-                        onClick={handleGeneratePredictions}
-                        loading={loadingPredictions}
-                        style={{ marginBottom: "16px" }}
-                    >
-                        Generate Predictions for Selected Ingredients
-                    </Button>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <Button
+                            type="primary"
+                            onClick={handleGeneratePredictions}
+                            loading={loadingPredictions}
+                        >
+                            Generate Predictions for Selected Ingredients
+                        </Button>
+                        <Button
+                            type="primary"
+                            onClick={handleCreateSupplyOrder}
+                        >
+                            Create Supply Order
+                        </Button>
+                    </div>
                 )}
                 pagination={{ pageSize: 10 }}
             />
@@ -139,7 +185,7 @@ const LowStockIngredients = ({ userId }) => {
                                     >
                                         <p>
                                             <strong>Total Predicted Value: </strong>
-                                            {prediction.totalPredictedValue}
+                                            {totalPredicted}
                                         </p>
                                         <Table
                                             dataSource={prediction.date.map((date, idx) => ({
