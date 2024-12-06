@@ -53,6 +53,7 @@ public class OrderService {
         Order order = new Order();
         order.setUser(user);
         List<OrderItem> itemList = new ArrayList<>();
+        orderRepository.save(order);
         for (OrderItemDTO itemDTO : itemDTOList) {
             int menuItemId = itemDTO.getMenuItemId();
 
@@ -62,10 +63,10 @@ public class OrderService {
             OrderItem orderItem = OrderItemMapper.toEntity(itemDTO, menuItem, order);
             itemList.add(orderItem);
         }
-
+        orderItemRepository.saveAll(itemList);
         order.setOrderItems(itemList);
         orderRepository.save(order);
-        orderItemRepository.saveAll(itemList);
+
 
         return order;
     }

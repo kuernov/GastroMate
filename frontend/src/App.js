@@ -30,6 +30,10 @@ const ProtectedRoute = ({ isLoggedIn, children }) => {
 const App = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(!!TokenService.getToken());
 
+    useEffect(() => {
+        document.title = "GastroMate";
+    }, []);
+
     const handleLogout = async () => {
         try {
             await logout();
